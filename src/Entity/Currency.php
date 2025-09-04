@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CurrencyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Currency
 {
     #[ORM\Id]
@@ -21,7 +22,7 @@ class Currency
     #[ORM\Column(type: Types::GUID)]
     private ?string $uuid = null;
 
-    #[ORM\Column(length: 4)]
+    #[ORM\Column(length: 64)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -74,6 +75,12 @@ class Currency
      */
     #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'currency')]
     private Collection $items;
+
+    #[ORM\Column(length: 3)]
+    private ?string $code = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $symbol = null;
 
     public function __construct()
     {
@@ -245,6 +252,30 @@ class Currency
                 $item->setCurrency(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getSymbol(): ?string
+    {
+        return $this->symbol;
+    }
+
+    public function setSymbol(string $symbol): static
+    {
+        $this->symbol = $symbol;
 
         return $this;
     }

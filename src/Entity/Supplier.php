@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SupplierRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Supplier
 {
     #[ORM\Id]

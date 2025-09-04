@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CompanyClientRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class CompanyClient
 {
     #[ORM\Id]

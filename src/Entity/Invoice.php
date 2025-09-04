@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: InvoiceRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Invoice
 {
     #[ORM\Id]

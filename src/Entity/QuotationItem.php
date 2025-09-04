@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: QuotationItemRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class QuotationItem
 {
     #[ORM\Id]

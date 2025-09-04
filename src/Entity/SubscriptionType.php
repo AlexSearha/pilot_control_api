@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SubscriptionTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class SubscriptionType
 {
     #[ORM\Id]

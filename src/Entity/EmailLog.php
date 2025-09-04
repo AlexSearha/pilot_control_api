@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EmailLogRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class EmailLog
 {
     #[ORM\Id]

@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: NotificationTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class NotificationType
 {
     #[ORM\Id]

@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Company
 {
     #[ORM\Id]
@@ -612,7 +613,7 @@ class Company
     {
         if (!$this->projects->contains($project)) {
             $this->projects->add($project);
-            $project->setComany($this);
+            $project->setCompany($this);
         }
 
         return $this;
@@ -622,8 +623,8 @@ class Company
     {
         if ($this->projects->removeElement($project)) {
             // set the owning side to null (unless already changed)
-            if ($project->getComany() === $this) {
-                $project->setComany(null);
+            if ($project->getCompany() === $this) {
+                $project->setCompany(null);
             }
         }
 
