@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\SubscriptionPlanBillingPeriodEnum;
 use App\Repository\SubscriptionPlanRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -35,9 +34,6 @@ class SubscriptionPlan
     #[ORM\Column(nullable: true)]
     private ?int $maxUser = null;
 
-    #[ORM\Column(enumType: SubscriptionPlanBillingPeriodEnum::class)]
-    private ?SubscriptionPlanBillingPeriodEnum $billingPeriod = null;
-
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $trialEndDate = null;
 
@@ -47,8 +43,14 @@ class SubscriptionPlan
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'subscriptionPlan')]
-    private ?Subscription $subscription = null;
+    #[ORM\Column(length: 20)]
+    private ?string $code = null;
+
+    #[ORM\ManyToOne(inversedBy: 'subscriptionPlans')]
+    private ?Currency $currency = null;
+
+    #[ORM\Column(type:Types::JSON)]
+    private array $features = [];
 
     /**
      * @var Collection<int, Subscription>
@@ -135,18 +137,6 @@ class SubscriptionPlan
         return $this;
     }
 
-    public function getBillingPeriod(): ?SubscriptionPlanBillingPeriodEnum
-    {
-        return $this->billingPeriod;
-    }
-
-    public function setBillingPeriod(SubscriptionPlanBillingPeriodEnum $billingPeriod): static
-    {
-        $this->billingPeriod = $billingPeriod;
-
-        return $this;
-    }
-
     public function getTrialEndDate(): ?\DateTimeImmutable
     {
         return $this->trialEndDate;
@@ -183,14 +173,50 @@ class SubscriptionPlan
         return $this;
     }
 
-    public function getSubscription(): ?Subscription
+    public function getMaxUser(): ?int
     {
-        return $this->subscription;
+        return $this->maxUser;
     }
 
-    public function setSubscription(?Subscription $subscription): static
+    public function setMaxUser(?int $maxUser): static
     {
-        $this->subscription = $subscription;
+        $this->maxUser = $maxUser;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getCurrency(): ?Currency
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?Currency $currency): static
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getFeatures(): array
+    {
+        return $this->features;
+    }
+
+    public function setFeatures(array $features): static
+    {
+        $this->features = $features;
 
         return $this;
     }
@@ -225,15 +251,4 @@ class SubscriptionPlan
         return $this;
     }
 
-    public function getMaxUser(): ?int
-    {
-        return $this->maxUser;
-    }
-
-    public function setMaxUser(?int $maxUser): static
-    {
-        $this->maxUser = $maxUser;
-
-        return $this;
-    }
 }

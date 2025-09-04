@@ -43,10 +43,10 @@ class Subscription
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'subscriptions')]
-    private ?SubscriptionType $subscriptionType = null;
+    private ?SubscriptionPlan $subscriptionPlan = null;
 
     #[ORM\ManyToOne(inversedBy: 'subscriptions')]
-    private ?SubscriptionPlan $subscriptionPlan = null;
+    private ?SubscriptionType $subscriptionType = null;
 
     /**
      * Pre persist variables
@@ -173,6 +173,18 @@ class Subscription
         return $this;
     }
 
+    public function getSubscriptionPlan(): ?SubscriptionPlan
+    {
+        return $this->subscriptionPlan;
+    }
+
+    public function setSubscriptionPlan(?SubscriptionPlan $subscriptionPlan): static
+    {
+        $this->subscriptionPlan = $subscriptionPlan;
+
+        return $this;
+    }
+
     public function getSubscriptionType(): ?SubscriptionType
     {
         return $this->subscriptionType;
@@ -185,15 +197,4 @@ class Subscription
         return $this;
     }
 
-    public function getSubscriptionPlan(): ?SubscriptionPlan
-    {
-        return $this->subscriptionPlan;
-    }
-
-    public function setSubscriptionPlan(?SubscriptionPlan $subscriptionPlan): static
-    {
-        $this->subscriptionPlan = $subscriptionPlan;
-
-        return $this;
-    }
 }

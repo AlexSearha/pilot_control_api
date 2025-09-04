@@ -34,11 +34,19 @@ class SubscriptionType
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $code = null;
+
     /**
      * @var Collection<int, Subscription>
      */
     #[ORM\OneToMany(targetEntity: Subscription::class, mappedBy: 'subscriptionType')]
     private Collection $subscriptions;
+
+    public function __construct()
+    {
+        $this->subscriptions = new ArrayCollection();
+    }
 
     /**
      * Pre persist variables
@@ -59,11 +67,6 @@ class SubscriptionType
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
         }
-    }
-
-    public function __construct()
-    {
-        $this->subscriptions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -131,6 +134,18 @@ class SubscriptionType
         return $this;
     }
 
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Subscription>
      */
@@ -160,4 +175,5 @@ class SubscriptionType
 
         return $this;
     }
+
 }

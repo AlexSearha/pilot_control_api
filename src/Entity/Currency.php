@@ -82,11 +82,18 @@ class Currency
     #[ORM\Column(length: 10)]
     private ?string $symbol = null;
 
+    /**
+     * @var Collection<int, SubscriptionPlan>
+     */
+    #[ORM\OneToMany(targetEntity: SubscriptionPlan::class, mappedBy: 'currency')]
+    private Collection $subscriptionPlans;
+
     public function __construct()
     {
         $this->supplierOrders = new ArrayCollection();
         $this->quotations = new ArrayCollection();
         $this->items = new ArrayCollection();
+        $this->subscriptionPlans = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -276,6 +283,36 @@ class Currency
     public function setSymbol(string $symbol): static
     {
         $this->symbol = $symbol;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SubscriptionPlan>
+     */
+    public function getSubscriptionPlans(): Collection
+    {
+        return $this->subscriptionPlans;
+    }
+
+    public function addSubscriptionPlan(SubscriptionPlan $subscriptionPlan): static
+    {
+        if (!$this->subscriptionPlans->contains($subscriptionPlan)) {
+            $this->subscriptionPlans->add($subscriptionPlan);
+            $subscriptionPlan->setCurrency($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscriptionPlan(SubscriptionPlan $subscriptionPlan): static
+    {
+        if ($this->subscriptionPlans->removeElement($subscriptionPlan)) {
+            // set the owning side to null (unless already changed)
+            if ($subscriptionPlan->getCurrency() === $this) {
+                $subscriptionPlan->setCurrency(null);
+            }
+        }
 
         return $this;
     }
