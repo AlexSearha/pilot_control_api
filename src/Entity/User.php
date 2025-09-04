@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -23,6 +25,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message:"Une e-mail est obligatoire")]
+    #[Assert\Email(
+        message: "L'e-mail renseigné n'est pas valide",
+    )]
     private ?string $email = null;
 
     /**
@@ -35,6 +41,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\PasswordStrength(
+        minScore: PasswordStrength::STRENGTH_VERY_STRONG,
+        message: "Mot de passe trop faible, utilisez majuscules, chiffres et caractères spéciaux."
+    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 64, nullable: true)]
@@ -128,6 +138,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->active === null) {
             $this->active = true;
+        }
+    }
+
+    #[ORM\PrePersist]
+    public function setThemeAtInit() : void
+    {
+        if ($this->theme === null) {
+            $this->theme = "light";
+        }
+    }
+
+    #[ORM\PrePersist]
+    public function setRoleAtInit() : void
+    {
+        if ($this->roles === []) {
+            $this->roles = ["ROLE_EMPLOYEE"];
         }
     }
 
@@ -248,7 +274,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
 
