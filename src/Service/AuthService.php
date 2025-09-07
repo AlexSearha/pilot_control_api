@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthService extends AbstractController
@@ -24,6 +25,7 @@ class AuthService extends AbstractController
         private UserRepository $userRepo,
         private MailerService $mailerService,
         private JWTTokenManagerInterface $JWTManager,
+        private SerializerInterface $serializer
     )
     {}
 
@@ -51,7 +53,7 @@ class AuthService extends AbstractController
         $findUser = $this->userRepo->findOneBy(['email' => $email]);
 
         if ($findUser) {
-            return $this->formatService->sendErrorJsonReponse("Un compte avec cette adresse e-mail existe déjà.", Response::HTTP_BAD_REQUEST);
+            return $this->formatService->sendErrorReponse("Un compte avec cette adresse e-mail existe déjà.", Response::HTTP_BAD_REQUEST);
         }
 
         $newUser = new User();
@@ -76,7 +78,7 @@ class AuthService extends AbstractController
                 $errorMessages[] = $error->getMessage();
             }
 
-            return $this->formatService->sendErrorJsonReponse($errorMessages, Response::HTTP_FORBIDDEN);
+            return $this->formatService->sendErrorReponse($errorMessages, Response::HTTP_FORBIDDEN);
         }
 
         $this->em->persist($newUser);
@@ -84,16 +86,9 @@ class AuthService extends AbstractController
 
 
         $token = $this->generateEmailConfirmationToken($newUser);
-        $this->mailerService->sendSimpleEmail($token);
+        $this->mailerService->sendSimpleEmail($token, $newUser, 'Confirmation email');
 
-        return $this->formatService->sendSuccessJsonReponse([
-            'uuid'      => $newUser->getUuid(),
-            'email'     => $newUser->getEmail(),
-            'firstname' => $newUser->getFirstname(),
-            'lastname'  => $newUser->getLastname(),
-            'phone'     => $newUser->getPhone(),
-            'username'  => $newUser->getUsername(),
-        ], Response::HTTP_CREATED);
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     public function confirmEmail(string $token) : JsonResponse
@@ -101,28 +96,28 @@ class AuthService extends AbstractController
         try {
             $decodeToken = $this->JWTManager->parse($token);
         } catch (\Exception $e) {
-            return $this->formatService->sendErrorJsonReponse('Votre jeton est invalide ou a expiré', Response::HTTP_BAD_REQUEST);
+            return $this->formatService->sendErrorReponse('Votre jeton est invalide ou a expiré', Response::HTTP_BAD_REQUEST);
         }
 
         if ($decodeToken['exp'] < (new DateTimeImmutable())->getTimestamp()) {
-            return $this->formatService->sendErrorJsonReponse('Votre jeton est invalide ou a expiré', Response::HTTP_BAD_REQUEST);
+            return $this->formatService->sendErrorReponse('Votre jeton est invalide ou a expiré', Response::HTTP_BAD_REQUEST);
         }
 
         $email = $decodeToken['email'];
         $user = $this->userRepo->findOneBy(['email' => $email]);
 
         if (!$user) {
-            return $this->formatService->sendErrorJsonReponse("L'utilisateur n'existe pas", Response::HTTP_NOT_FOUND);
+            return $this->formatService->sendErrorReponse("L'utilisateur n'existe pas", Response::HTTP_NOT_FOUND);
         }
 
         $user->setUserConfirmed(true);
         try {
             $this->em->flush();
+            return $this->formatService->sendSuccessReponse(['message' => 'Votre compte est confirmé']);
         } catch (\Exception $e) {
-            return $this->formatService->sendErrorJsonReponse("Une erreur s'est produite");
+            return $this->formatService->sendErrorReponse("Une erreur s'est produite");
         }
 
-        return $this->formatService->sendSuccessJsonReponse(['message' => 'Votre compte est confirmé']);
     }
 
     public function resetpassword(array $payload)
@@ -132,7 +127,7 @@ class AuthService extends AbstractController
 
         $user = $this->userRepo->findOneBy(['email' => $email]);
         if (!$user) {
-            return $this->formatService->sendErrorJsonReponse("L'utilisateur n'existe pas", Response::HTTP_NOT_FOUND);
+            return $this->formatService->sendErrorReponse("L'utilisateur n'existe pas", Response::HTTP_NOT_FOUND);
         }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
@@ -140,9 +135,18 @@ class AuthService extends AbstractController
         try {
             $this->em->flush();
         } catch (\Exception $e) {
-            return $this->formatService->sendErrorJsonReponse("Une erreur s'est produite");
+            return $this->formatService->sendErrorReponse("Une erreur s'est produite");
         }
 
-        return $this->formatService->sendSuccessJsonReponse(['message' => 'Votre mot de passe à été modifié avec succès']);
+        return $this->formatService->sendSuccessReponse(['message' => 'Votre mot de passe à été modifié avec succès']);
+    }
+
+    public function getUserInformation(User $user) : JsonResponse
+    {
+        if (!$user) return $this->formatService->sendErrorReponse("Une erreur s'est produite");
+
+        $serializeData = $this->serializer->serialize($user, 'json', ['groups' => 'get:auth_me']);
+
+        return $this->formatService->sendSuccessSerializeResponse($serializeData);
     }
 }

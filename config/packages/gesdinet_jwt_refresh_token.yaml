@@ -1,5 +1,12 @@
 gesdinet_jwt_refresh_token:
     ttl_update: true
     refresh_token_class: App\Entity\RefreshToken # This is the class name of the refresh token, you will need to adjust this to match the class your application will use
-    logout:
-        clear_site_data: ["cookies", "storage"]
+    cookie:
+        enabled: true
+        same_site: none            # default value
+        path: /                      # default value
+        domain: null                 # default value
+        http_only: true              # default value
+        secure: true                 # default value
+        partitioned: false           # default value
+        remove_token_from_body: true # default value

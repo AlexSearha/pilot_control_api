@@ -2,28 +2,30 @@
 
 namespace App\Service;
 
+use App\Entity\User;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
-class MailerService
+class MailerService extends AbstractController
 {
     public function __construct(
         private MailerInterface $mailer
     )
     {}
 
-    public function sendSimpleEmail(string $token)
+    public function sendSimpleEmail(string $token, User $user, string $subject)
     {
 
         $email = (new Email())
-            ->from('alex@controlpilot.fr')
-            ->to('alexma225@hotmail.com')
+            ->from($this->getParameter('email_from'))
+            ->to($user->getEmail())
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
             //->replyTo('fabien@example.com')
             //->priority(Email::PRIORITY_HIGH)
-            ->subject('subject')
-            ->html('<p>See Twig integration for better HTML integration! le token :</p>' . $token);
+            ->subject($subject)
+            ->html('<p>Votre token : </p>' . $token);
 
             $this->mailer->send($email);
     }

@@ -1,0 +1,18 @@
+App\Entity\User:
+    attributes:
+        uuid:
+            groups: ['get:auth_me']
+        roles:
+            groups: ['get:auth_me']
+        firstname:
+            groups: ['get:auth_me']
+        lastname:
+            groups: ['get:auth_me']
+        phone:
+            groups: ['get:auth_me']
+        theme:
+            groups: ['get:auth_me']
+        jobTitle:
+            groups: ['get:auth_me']
+        userConfirmed:
+            groups: ['get:auth_me']
