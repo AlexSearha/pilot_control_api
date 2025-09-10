@@ -45,10 +45,10 @@ L'objectif est de fournir une solution complète pour suivre l'activité commerc
 
 ## Technologies utilisées
 
-- **Backend** : PHP 8.x avec Symfony
-- **ORM** : Doctrine pour la gestion des entités et des relations
-- **Base de données** : MySQL / PostgreSQL
-- **Frontend** : NextJs, TypeScript, ChakraUI
+- **Backend** : PHP 8.3 avec Symfony
+- **ORM** : Doctrine
+- **Base de données** : MySQL
+- **Frontend** : NextJs, TypeScript, Ant Design
 - **Gestion des utilisateurs** : Symfony Security pour l’authentification et les rôles
 - **Enumérations** : pour gérer les types de maintenance, unités d’articles, statuts, etc.
 

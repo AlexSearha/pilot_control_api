@@ -34,15 +34,15 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/api/reset/password-check', name: 'app_auth_reset_password_check', methods:['POST'])]
-    public function resetPasswordCheck(Request $request)
+    public function resetPasswordCheck(Request $request): JsonResponse
     {
         $payload = $request->getPayload()->all();
 
         return $this->authService->resetPasswordCheck($payload);
     }
 
-    #[Route('/api/reset/password', name: 'app_auth_reset_password_check', methods:['POST'])]
-    public function resetPassword(Request $request)
+    #[Route('/api/reset/password', name: 'app_auth_reset_password', methods:['POST'])]
+    public function resetPassword(Request $request): JsonResponse
     {
         $payload = $request->getPayload()->all();
 
@@ -50,7 +50,7 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/api/change-password', name: 'app_auth_change_password', methods:['POST'])]
-    public function changePassword(Request $request)
+    public function changePassword(Request $request): JsonResponse
     {
         $payload = $request->getPayload()->all();
 
@@ -58,7 +58,7 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/api/me', name: 'app_auth_me', methods:['GET'])]
-    public function userInformations(#[CurrentUser] $user)
+    public function userInformations(#[CurrentUser] $user): JsonResponse
     {
         return $this->authService->getUserInformation($user);
     }

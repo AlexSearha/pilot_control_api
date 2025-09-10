@@ -5,6 +5,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use DateTimeImmutable;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -45,8 +46,21 @@ class TokenService extends AbstractController
     *
     * @return array The decoded payload of the token.
     */
-    public function tokenParser(string $token)
+    public function tokenParser(string $token): array
     {
         return $this->jWTTokenManager->parse($token);
+    }
+
+    public function checkTokenValidity(string $token): bool
+    {
+        $decodeToken = $this->tokenParser($token);
+
+        if(!is_array($decodeToken)) return false;
+
+        $now = (new DateTimeImmutable())->getTimestamp();
+
+        if ($now > $decodeToken['exp']) return false;
+
+        return true;
     }
 }

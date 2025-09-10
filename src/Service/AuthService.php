@@ -30,37 +30,36 @@ class AuthService extends AbstractController
     )
     {}
 
-
+    /**
+     * Registers a new user in the database.
+     *
+     * - Checks if the email is already in use.
+     * - Validates the User entity constraints.
+     * - Hashes the password and persists the user.
+     * - Generates a confirmation token and sends a confirmation email.
+     *
+     * @param array<string, mixed> $payload  New user data,
+     *                                       expected keys: ['email' => string, 'password' => string]
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception If an unexpected error occurs during persistence
+     */
     public function registerNewUser(mixed $payload) : JsonResponse
     {
         $email = $payload['email'] ?? null;
         $password = $payload['password'] ?? null;
-        $firstname = $payload["firstname"] ?? null;
-        $lastname = $payload["lastname"] ?? null;
-        $phone = $payload["phone"] ?? null;
-        $username = $payload["username"] ?? null;
         $errorMessages = [];
 
         $findUser = $this->userRepo->findOneBy(['email' => $email]);
-
         if ($findUser) {
             return $this->formatService->sendErrorReponse("Un compte avec cette adresse e-mail existe déjà.", Response::HTTP_BAD_REQUEST);
         }
 
         $newUser = new User();
-
         $newUser
             ->setEmail($email)
-            ->setPassword($this->passwordHasher->hashPassword($newUser, $password))
-            ->setFirstname($firstname)
-            ->setLastname($lastname)
-            ->setPhone($phone);
-
-
-        if (!$username && $firstname !== null && $lastname !== null) {
-            $newUser->setUsername($firstname . '.' . $lastname);
-        }
-
+            ->setPassword($this->passwordHasher->hashPassword($newUser, $password));
 
         $errors = $this->validator->validate($newUser);
 
@@ -75,13 +74,26 @@ class AuthService extends AbstractController
         $this->em->persist($newUser);
         $this->em->flush();
 
-
         $token = $this->tokenService->generateTokenFromPayload($newUser, 'email_confirmation');
         $this->mailerService->sendSimpleEmail($token, $newUser, 'Confirmation email');
 
         return $this->json(null, Response::HTTP_CREATED);
     }
 
+    /**
+     * Confirms a user's email address based on a given token.
+     *
+     * - Parses and validates the token.
+     * - Checks if the token has expired.
+     * - Finds the user associated with the email in the token.
+     * - Marks the user as confirmed if found.
+     *
+     * @param string $token  The confirmation token received by the user
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception If an unexpected error occurs during database operations
+     */
     public function confirmEmail(string $token) : JsonResponse
     {
         try {
@@ -108,9 +120,22 @@ class AuthService extends AbstractController
         } catch (\Exception $e) {
             return $this->formatService->sendErrorReponse("Une erreur s'est produite", $e->getCode());
         }
-
     }
 
+    /**
+     * Initiates the password reset process for a user.
+     *
+     * - Looks up the user by email.
+     * - Generates a short-lived reset password token.
+     * - Sends the reset password email to the user.
+     *
+     * @param array<string, mixed> $payload  Data containing the user's email
+     *
+     * @return JsonResponse|null Returns a success response if the user exists,
+     *                           or null if the user is not found
+     *
+     * @throws \Exception If an unexpected error occurs during token generation or email sending
+     */
     public function resetpassword(array $payload)
     {
         $email = $payload['email'] ?? null;
@@ -127,15 +152,69 @@ class AuthService extends AbstractController
         return $this->formatService->sendSuccessReponse();
     }
 
+    /**
+     * Completes the password reset process for a user.
+     *
+     * - Parses and validates the reset password token.
+     * - Ensures the token purpose is valid and not expired.
+     * - Finds the user associated with the token.
+     * - Updates the user's password with the newly provided one.
+     *
+     * @param array<string, mixed> $payload  Data containing the reset token and the new password
+     *
+     * @return JsonResponse|null Returns a success or error response depending on the outcome,
+     *                           or null if the user is not found
+     *
+     * @throws \Exception If an unexpected error occurs during the database update
+     */
     public function resetPasswordCheck(array $payload)
     {
-        $token = $payload['token'] ?? null;
+
+        $token      = $payload['token'] ?? null;
+        $password   = $payload['password'] ?? null;
 
         $decodeToken = $this->tokenService->tokenParser($token);
 
-        dd($decodeToken);
+        if ($decodeToken['purpose'] !== 'reset_password') {
+            return $this->formatService->sendErrorReponse('Une erreur est survenue');
+        }
+
+        if (!$this->tokenService->checkTokenValidity($token)) {
+            return $this->formatService->sendErrorReponse('Le jeton est expiré/invalide', Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userRepo->findOneBy(['email' => $decodeToken['email']]);
+        if (!$user) {
+            $this->formatService->sendErrorReponse('Utilisateur non trouvé', Response::HTTP_NOT_FOUND);
+        }
+
+        $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+
+        try {
+            $this->em->flush();
+            return $this->formatService->sendSuccessReponse();
+        } catch (\Exception $e) {
+            $this->formatService->sendErrorReponse('une erreur est survenue');
+
+        }
     }
 
+    /**
+     * Changes the authenticated user's password.
+     *
+     * - Validates that all required password fields are provided.
+     * - Ensures the current (old) password is correct.
+     * - Updates the user's password with the new one.
+     *
+     * @param array<string, mixed> $payload  Data containing:
+     *                                       - oldPassword: string
+     *                                       - newPassword: string
+     *                                       - checkNewPassword: string
+     *
+     * @return JsonResponse Returns a success or error response depending on the outcome
+     *
+     * @throws \Exception If an unexpected error occurs during the database update
+     */
     public function changePassword(array $payload)
     {
         /** @var User $userSession */
@@ -168,6 +247,17 @@ class AuthService extends AbstractController
         }
     }
 
+    /**
+     * Retrieves information about a specific user.
+     *
+     * - Serializes the user data with the 'get:auth_me' serialization group.
+     * - Returns a success response with the serialized data.
+     *
+     * @param User $user  The user entity whose information is being retrieved
+     *
+     * @return JsonResponse Returns a success response with user data,
+     *                      or an error response if the user is invalid
+     */
     public function getUserInformation(User $user) : JsonResponse
     {
         if (!$user) return $this->formatService->sendErrorReponse("Une erreur s'est produite");
