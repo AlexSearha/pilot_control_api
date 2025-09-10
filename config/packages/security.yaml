@@ -24,6 +24,8 @@ security:
                 check_path: /api/token/refresh # or, you may use the `api_refresh_token` route name
                 # or if you have more than one user provider
                 # provider: user_provider_name
+            logout:
+                path: api_token_invalidate
 
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -50,7 +52,7 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
         - { path: ^/api/confirm-email, roles: PUBLIC_ACCESS }
-        - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/api/reset/password, roles: PUBLIC_ACCESS }
         - { path: ^/api/admin, roles: ROLE_SUPER_ADMIN}
         - { path: ^/api, roles: ROLE_EMPLOYEE }
 

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class FormatService extends AbstractController
 {
 
-    public function sendSuccessReponse(mixed $data, $code = 200, bool $compressed = false): JsonResponse
+    public function sendSuccessReponse(mixed $data = null, $code = 200, bool $compressed = false): JsonResponse
     {
         $data = [
             'status' => 'success',

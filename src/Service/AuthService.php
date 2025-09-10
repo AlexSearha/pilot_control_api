@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,24 +21,15 @@ class AuthService extends AbstractController
         private ValidatorInterface $validator,
         private UserPasswordHasherInterface $passwordHasher,
         private FormatService $formatService,
+        private TokenService $tokenService,
         private EntityManagerInterface $em,
         private UserRepository $userRepo,
         private MailerService $mailerService,
-        private JWTTokenManagerInterface $JWTManager,
-        private SerializerInterface $serializer
+        private SerializerInterface $serializer,
+        private LoggerInterface $logger
     )
     {}
 
-    private function generateEmailConfirmationToken(User $user): string
-    {
-        $payload = [
-            'email' => $user->getEmail(),
-            'purpose' => 'email_confirmation',
-            'exp' => (new \DateTimeImmutable('+5 minute'))->getTimestamp(),
-        ];
-
-        return $this->JWTManager->createFromPayload($user, $payload);
-    }
 
     public function registerNewUser(mixed $payload) : JsonResponse
     {
@@ -85,7 +76,7 @@ class AuthService extends AbstractController
         $this->em->flush();
 
 
-        $token = $this->generateEmailConfirmationToken($newUser);
+        $token = $this->tokenService->generateTokenFromPayload($newUser, 'email_confirmation');
         $this->mailerService->sendSimpleEmail($token, $newUser, 'Confirmation email');
 
         return $this->json(null, Response::HTTP_CREATED);
@@ -94,7 +85,7 @@ class AuthService extends AbstractController
     public function confirmEmail(string $token) : JsonResponse
     {
         try {
-            $decodeToken = $this->JWTManager->parse($token);
+            $decodeToken = $this->tokenService->tokenParser($token);
         } catch (\Exception $e) {
             return $this->formatService->sendErrorReponse('Votre jeton est invalide ou a expiré', Response::HTTP_BAD_REQUEST);
         }
@@ -115,30 +106,66 @@ class AuthService extends AbstractController
             $this->em->flush();
             return $this->formatService->sendSuccessReponse(['message' => 'Votre compte est confirmé']);
         } catch (\Exception $e) {
-            return $this->formatService->sendErrorReponse("Une erreur s'est produite");
+            return $this->formatService->sendErrorReponse("Une erreur s'est produite", $e->getCode());
         }
 
     }
 
     public function resetpassword(array $payload)
     {
-        $email          = $payload['email'] ?? null;
-        $newPassword    = $payload['password'] ?? null;
+        $email = $payload['email'] ?? null;
 
         $user = $this->userRepo->findOneBy(['email' => $email]);
         if (!$user) {
+            return;
+        }
+
+        $generateToken = $this->tokenService->generateTokenFromPayload($user, 'reset_password', '+30 minutes');
+
+        $this->mailerService->sendSimpleEmail($generateToken, $user, 'Reset password');
+
+        return $this->formatService->sendSuccessReponse();
+    }
+
+    public function resetPasswordCheck(array $payload)
+    {
+        $token = $payload['token'] ?? null;
+
+        $decodeToken = $this->tokenService->tokenParser($token);
+
+        dd($decodeToken);
+    }
+
+    public function changePassword(array $payload)
+    {
+        /** @var User $userSession */
+        $userSession        = $this->getUser();
+        $oldPassword        = $payload['oldPassword']?? null;
+        $newPassword        = $payload['newPassword'] ?? null;
+        $checkNewPassword   = $payload['checkNewPassword'] ?? null;
+
+        if (!$oldPassword || !$newPassword || !$checkNewPassword) {
+            return $this->formatService->sendErrorReponse("Le mot de passe ne respecte pas les critères de sécurité requis.", Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userRepo->findOneBy(['email' => $userSession->getEmail()]);
+        if (!$user) {
             return $this->formatService->sendErrorReponse("L'utilisateur n'existe pas", Response::HTTP_NOT_FOUND);
+        }
+
+        $isOldPasswordValid = $this->passwordHasher->isPasswordValid($user, $oldPassword);
+        if (!$isOldPasswordValid) {
+            return $this->formatService->sendErrorReponse("Mot de passe incorrect", Response::HTTP_UNAUTHORIZED);
         }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
 
         try {
             $this->em->flush();
+            return $this->formatService->sendSuccessReponse();
         } catch (\Exception $e) {
-            return $this->formatService->sendErrorReponse("Une erreur s'est produite");
+            return $this->formatService->sendErrorReponse("Une erreur s'est produite", Response::HTTP_UNAUTHORIZED);
         }
-
-        return $this->formatService->sendSuccessReponse(['message' => 'Votre mot de passe à été modifié avec succès']);
     }
 
     public function getUserInformation(User $user) : JsonResponse

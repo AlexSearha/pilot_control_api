@@ -33,12 +33,28 @@ final class AuthController extends AbstractController
         return $this->authService->confirmEmail($payload['token']);
     }
 
-    #[Route('/api/reset-password', name: 'app_auth_reset_password', methods:['POST'])]
+    #[Route('/api/reset/password-check', name: 'app_auth_reset_password_check', methods:['POST'])]
+    public function resetPasswordCheck(Request $request)
+    {
+        $payload = $request->getPayload()->all();
+
+        return $this->authService->resetPasswordCheck($payload);
+    }
+
+    #[Route('/api/reset/password', name: 'app_auth_reset_password_check', methods:['POST'])]
     public function resetPassword(Request $request)
     {
         $payload = $request->getPayload()->all();
 
         return $this->authService->resetPassword($payload);
+    }
+
+    #[Route('/api/change-password', name: 'app_auth_change_password', methods:['POST'])]
+    public function changePassword(Request $request)
+    {
+        $payload = $request->getPayload()->all();
+
+        return $this->authService->changePassword($payload);
     }
 
     #[Route('/api/me', name: 'app_auth_me', methods:['GET'])]
