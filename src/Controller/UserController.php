@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
-use App\Security\Voter\AccessVoter;
+use App\Entity\User;
+use App\Security\Voter\UserVoter;
 use App\Service\FormatService;
 use App\Service\UserService;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class UserController extends AbstractController
 {
@@ -120,6 +121,7 @@ final class UserController extends AbstractController
         }
     }
 
+    // ---- Users Routes ----
     #[Route('/api/company/{companyUuid}/users', name: 'app_company_get_all_users', methods:['GET'])]
     #[IsGranted('ROLE_MANAGER')]
     public function getClientAllUsers(string $companyUuid): JsonResponse
@@ -166,4 +168,23 @@ final class UserController extends AbstractController
 
         }
     }
+
+    #[Route('/api/company/{companyUuid}/user/{userUuid}', name: 'app_company_update_user', methods:['PATCH'])]
+    #[IsGranted(UserVoter::EDIT, 'user')]
+    public function updateClientUser(#[MapEntity(mapping: ['userUuid' => 'uuid'])] User $user, Request $request, string $companyUuid)
+    {
+
+        $payload = $request->getPayload()->all();
+
+        try {
+            $userData = $this->userService->updateClientUser($payload, $companyUuid, $user->getUuid());
+            $serializeData = $this->serializer->serialize($userData, 'json', ['groups' => 'get:auth_me']);
+            return $this->format->sendSuccessSerializeResponse($serializeData);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+
+        }
+    }
+
 }

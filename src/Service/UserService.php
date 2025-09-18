@@ -216,4 +216,61 @@ class UserService extends AbstractController
         return $this->createUser($payload, $companyUuid);
     }
 
+    public function updateClientUser(array $payload, string $companyUuid, string $userUuid)
+    {
+        if (!$userUuid) {
+            throw new \Exception("Identifiant du user n'est pas renseigné", Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->companyService->getOneCompany($companyUuid);
+
+        $user = $this->getOneUser($userUuid);
+
+        if (isset($payload['email'])) {
+            $user->setEmail($payload['email']);
+        }
+        if (isset($payload['firstname'])) {
+            $user->setFirstname($payload['firstname']);
+        }
+        if (isset($payload['lastname'])) {
+            $user->setLastname($payload['lastname']);
+        }
+        if (isset($payload['phone'])) {
+            $user->setPhone($payload['phone']);
+        }
+        if (isset($payload['username'])) {
+            $user->setUsername($payload['username']);
+        }
+        if (isset($payload['theme'])) {
+            $user->setTheme($payload['theme']);
+        }
+        if (isset($payload['jobTitle'])) {
+            $user->setJobTitle($payload['jobTitle']);
+        }
+        if (isset($payload['userConfirmed'])) {
+            $user->setUserConfirmed($payload['userConfirmed']);
+        }
+        if (isset($payload['active'])) {
+            $user->setActive($payload['active']);
+        }
+        if (isset($payload['roles'])) {
+
+            if (in_array('ROLE_SUPER_ADMIN', $payload['roles'])) {
+                throw new \Exception("Vous n'avez pas les droits pour effectuer cette action", Response::HTTP_UNAUTHORIZED);
+            }
+
+            $user->setRoles($payload['roles']);
+        }
+
+        $user->setUpdatedAt(new DateTimeImmutable());
+
+        try {
+            $this->em->flush();
+            $this->em->refresh($user);
+            return $user;
+        } catch (\Exception $e) {
+            throw new \Exception("Une erreur est survenue", $e->getCode());
+
+        }
+    }
 }

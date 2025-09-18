@@ -69,7 +69,7 @@ class AuthService extends AbstractController
                 $errorMessages[] = $error->getMessage();
             }
 
-            return $this->formatService->sendErrorReponse($errorMessages, Response::HTTP_FORBIDDEN);
+            return $this->formatService->sendErrorReponse(implode(',',$errorMessages), Response::HTTP_FORBIDDEN);
         }
 
         $this->em->persist($newUser);
