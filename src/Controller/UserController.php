@@ -121,6 +121,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/company/{companyUuid}/users', name: 'app_company_get_all_users', methods:['GET'])]
+    #[IsGranted('ROLE_MANAGER')]
     public function getClientAllUsers(string $companyUuid): JsonResponse
     {
         try {
@@ -134,7 +135,8 @@ final class UserController extends AbstractController
         }
     }
 
-    #[Route('/api/company/{companyUuid}/users/{userUuid}', name: 'app_company_get_one_user', methods:['GET'])]
+    #[Route('/api/company/{companyUuid}/user/{userUuid}', name: 'app_company_get_one_user', methods:['GET'])]
+    #[IsGranted('ROLE_EMPLOYEE')]
     public function getClientOneUser(string $companyUuid, string $userUuid): JsonResponse
     {
         try {
@@ -148,13 +150,14 @@ final class UserController extends AbstractController
         }
     }
 
-    #[Route('/api/company/{companyUuid}/users', name: 'app_company_create_user', methods:['POST'])]
+    #[Route('/api/company/{companyUuid}/user', name: 'app_company_create_user', methods:['POST'])]
+    #[IsGranted('ROLE_MANAGER')]
     public function createClientUser(Request $request, string $companyUuid): JsonResponse
     {
         $payload = $request->getPayload()->all();
 
         try {
-            $user = $this->userService->createUser($payload, $companyUuid);
+            $user = $this->userService->createClientUser($payload, $companyUuid);
             $serializeData = $this->serializer->serialize($user, 'json', ['groups' => 'get:auth_me']);
             return $this->format->sendSuccessSerializeResponse($serializeData);
 

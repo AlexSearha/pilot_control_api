@@ -43,13 +43,13 @@ class UserService extends AbstractController
         return $user;
     }
 
-    public function createUser(array $payload)
+    public function createUser(array $payload, $compagnyUuid = null)
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune données de reçues", Response::HTTP_NOT_FOUND);
         }
 
-        if (!isset($payload['email']) || !isset($payload['password']) || !isset($payload['companyUuid'])) {
+        if (!isset($payload['email']) || !isset($payload['password']) || (!$compagnyUuid && !isset($payload['companyUuid']))) {
             throw new \Exception("Email / Mot de passe / Société est manquant", Response::HTTP_BAD_REQUEST);
         }
 
@@ -64,7 +64,7 @@ class UserService extends AbstractController
             ->setEmail($payload['email'])
             ->setPassword($this->passwordHasher->hashPassword($newUser, $payload['password']));
 
-        $compagny = $this->companyService->getOneCompany($payload['companyUuid']);
+        $compagny = $this->companyService->getOneCompany($compagnyUuid ?? $payload['companyUuid']);
 
         $newUser->setCompany($compagny);
 
@@ -213,7 +213,7 @@ class UserService extends AbstractController
 
     public function createClientUser(array $payload, string $companyUuid)
     {
-
+        return $this->createUser($payload, $companyUuid);
     }
 
 }
