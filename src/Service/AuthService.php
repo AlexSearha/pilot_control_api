@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -26,7 +27,7 @@ class AuthService extends AbstractController
         private UserRepository $userRepo,
         private MailerService $mailerService,
         private SerializerInterface $serializer,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     )
     {}
 
@@ -74,7 +75,7 @@ class AuthService extends AbstractController
         $this->em->persist($newUser);
         $this->em->flush();
 
-        $token = $this->tokenService->generateTokenFromPayload($newUser, 'email_confirmation');
+        $token = $this->tokenService->generateExpiredToken($newUser, 'email_confirmation');
         $this->mailerService->sendSimpleEmail($token, $newUser, 'Confirmation email');
 
         return $this->json(null, Response::HTTP_CREATED);
@@ -145,7 +146,7 @@ class AuthService extends AbstractController
             return;
         }
 
-        $generateToken = $this->tokenService->generateTokenFromPayload($user, 'reset_password', '+30 minutes');
+        $generateToken = $this->tokenService->generateExpiredToken($user, 'reset_password');
 
         $this->mailerService->sendSimpleEmail($generateToken, $user, 'Reset password');
 
@@ -266,4 +267,47 @@ class AuthService extends AbstractController
 
         return $this->formatService->sendSuccessSerializeResponse($serializeData);
     }
+
+    /**
+     * Generates a unique random numeric string of the specified length.
+     *
+     * This method repeatedly generates a numeric string of the given length
+     * until it finds one that is not already assigned as an auth code
+     * to any existing user in the repository.
+     *
+     * @param int $digits The number of digits for the generated code. Defaults to 6.
+     *
+     * @return string A unique numeric string of the specified length.
+     */
+    public function generateRandomDigits(int $digits = 6): string
+    {
+        do {
+            $number = $this->generateDigits($digits);
+
+            $existingUser = $this->userRepo->findOneBy(['authCode' => $number]);
+
+        } while ($existingUser !== null);
+
+        return $number;
+    }
+
+    /**
+     * Generates a random numeric string with the specified number of digits.
+     *
+     * The generated string will always have exactly the given length,
+     * padding with leading zeros if necessary.
+     *
+     * @param int $digits The number of digits to generate.
+     *
+     * @return string A numeric string of the specified length.
+     *
+     */
+    private function generateDigits(int $digits): string
+    {
+        $max = (10 ** $digits) - 1;
+        $generateInt = random_int(0, $max);
+
+        return str_pad((string) $generateInt, $digits, '0', STR_PAD_LEFT);
+    }
+
 }

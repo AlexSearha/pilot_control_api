@@ -24,19 +24,29 @@ class TokenService extends AbstractController
      *
      * @param User   $user   The user object for whom the token is generated.
      * @param string $purpose A string describing the purpose of the token (e.g., "password_reset").
-     * @param string $ttl    The time-to-live for the token, in a format accepted by DateTimeImmutable (default: "+1 hour").
+     * @param string $ttl    The time-to-live for the token, in a format accepted by DateTimeImmutable (default: "+10 minutes").
      *
      * @return string The generated JWT token as a string.
      */
-    public function generateTokenFromPayload(User $user, string $purpose, $ttl = "+1 hour"): string
+    public function generateTokenFromPayload(User $user, array $payload): string
     {
+        return $this->jWTTokenManager->createFromPayload($user, $payload);
+    }
+
+    public function generateExpiredToken(User $user, string|null $purpose = null, $ttl = '+10 minutes', array $extraPayload = [])
+    {
+
         $payload = [
-            'email' => $user->getEmail(),
-            'purpose' => $purpose,
-            'exp' => (new \DateTimeImmutable($ttl))->getTimestamp(),
+            'iat'       => (new \DateTimeImmutable())->getTimestamp(),
+            'exp'       => (new \DateTimeImmutable($ttl))->getTimestamp(),
+            'email'     => $user->getEmail(),
+            'roles'     => $user->getRoles(),
+            'purpose'   => $purpose,
         ];
 
-        return $this->jWTTokenManager->createFromPayload($user, $payload);
+        $sendPayload = count($extraPayload) > 0 ? [...$payload, ...$extraPayload] : $payload;
+
+        return $this->jWTTokenManager->createFromPayload($user, $sendPayload);
     }
 
     /**
