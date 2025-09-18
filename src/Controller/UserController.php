@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\Voter\AccessVoter;
 use App\Service\FormatService;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -9,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -24,6 +26,7 @@ final class UserController extends AbstractController
 
     // ---- Admins Routes ----
     #[Route('/api/users', name: 'app_user_all_users', methods:['GET'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function getAllUsers(): JsonResponse
     {
         $allUsers = $this->userService->getAllUser();
@@ -35,6 +38,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/user/{uuid}', name: 'app_user_one_user', methods:['GET'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function getOneUser(string $uuid): JsonResponse
     {
         try {
@@ -50,6 +54,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/user', name: 'app_user_create_user', methods:['POST'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function createUser(Request $request): JsonResponse
     {
 
@@ -67,6 +72,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/user/{userUuid}', name: 'app_user_update_user', methods:['PATCH'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function updateUser(Request $request, string $userUuid): JsonResponse
     {
 
@@ -84,6 +90,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/user/{userUuid}', name: 'app_user_delete_user', methods:['DELETE'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteUser(string $userUuid): JsonResponse
     {
 
@@ -98,6 +105,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/users', name: 'app_user_delete_users', methods:['DELETE'])]
+    #[IsGranted('ROLE_SUPER_ADMIN')]
     public function deleteUsers(Request $request): JsonResponse
     {
         $payload = $request->getPayload()->all();
