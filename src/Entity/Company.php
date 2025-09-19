@@ -21,7 +21,7 @@ class Company
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message:"Une nom est obligatoire")]
+    #[Assert\NotBlank(message:"Un nom est obligatoire")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]

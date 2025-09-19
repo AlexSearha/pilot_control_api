@@ -33,10 +33,7 @@ class CompanyService extends AbstractController
             throw new \Exception("aucun identifiant reçu", Response::HTTP_BAD_REQUEST);
         }
 
-        $company = $this->companyRepo->findOneBy(['uuid' => $uuid]);
-        if (!$company) {
-            throw new \Exception("Société inconnue", Response::HTTP_NOT_FOUND);
-        }
+        $company = $this->getCompanyByUuid($uuid);
 
         return $company;
     }
@@ -118,10 +115,7 @@ class CompanyService extends AbstractController
 
     public function deleteCompany(string $companyUuid): void
     {
-        $company = $this->companyRepo->findOneBy(['uuid' => $companyUuid]);
-        if (!$company) {
-            throw new \Exception("Société inconnue", Response::HTTP_NOT_FOUND);
-        }
+        $company = $this->getCompanyByUuid($companyUuid);
 
         /** @var Company $company */
         $company->setDeletedAt(new DateTimeImmutable());
@@ -210,5 +204,16 @@ class CompanyService extends AbstractController
             throw new \Exception('Une erreur est survenue', $e->getCode());
 
         }
+    }
+
+    public function getCompanyByUuid(string $copanyUuid): Company
+    {
+        $company = $this->companyRepo->findOneBy(['uuid' => $copanyUuid]);
+
+        if (!$company) {
+            throw new \Exception("Société inconnue", Response::HTTP_NOT_FOUND);
+        }
+
+        return $company;
     }
 }

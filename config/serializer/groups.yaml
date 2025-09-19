@@ -18,6 +18,8 @@ App\Entity\User:
             groups: ['get:auth_me', 'get:full_company']
         userConfirmed:
             groups: ['get:auth_me', 'get:full_company']
+        company:
+            groups: ['get:auth_me']
         createdAt:
             groups: ['get:auth_me', 'get:full_company']
         updatedAt:
@@ -29,6 +31,65 @@ App\Entity\User:
 App\Entity\Company:
     attributes:
         uuid:
+            groups: ['get:light_company', 'get:full_company', get:auth_me]
+        name:
+            groups: ['get:light_company', 'get:full_company', get:auth_me]
+        email:
+            groups: ['get:light_company', 'get:full_company', get:auth_me]
+        address:
+            groups: ['get:light_company', 'get:full_company']
+        # zipcode:
+        #     groups: ['get:light_company', 'get:full_company']
+        # city:
+        #     groups: ['get:light_company', 'get:full_company']
+        # siret:
+        #     groups: ['get:light_company', 'get:full_company']
+        # siren:
+        #     groups: ['get:light_company', 'get:full_company']
+        # region:
+        #     groups: ['get:light_company', 'get:full_company']
+        # vatNumber:
+        #     groups: ['get:light_company', 'get:full_company']
+        # activityType:
+        #     groups: ['get:light_company', 'get:full_company']
+        # website:
+        #     groups: ['get:light_company', 'get:full_company']
+        # numberOfEmployee:
+        #     groups: ['get:light_company', 'get:full_company']
+        # industry:
+        #     groups: ['get:light_company', 'get:full_company']
+        # active:
+        #     groups: ['get:light_company', 'get:full_company']
+        # comments:
+        #     groups: ['get:light_company', 'get:full_company']
+        # createdAt:
+        #     groups: ['get:light_company', 'get:full_company']
+        # updatedAt:
+        #     groups: ['get:light_company', 'get:full_company']
+        # deletedAt:
+        #     groups: ['get:light_company', 'get:full_company']
+        # users:
+        #     groups: ['get:full_company']
+        # companyClients:
+        #     groups: ['get:full_company']
+        # subscriptions:
+        #     groups: ['get:full_company']
+        # suppliers:
+        #     groups: ['get:full_company']
+        # items:
+        #     groups: ['get:full_company']
+        # projects:
+        #     groups: ['get:full_company']
+        # supplierOrders:
+        #     groups: ['get:full_company']
+        # quotations:
+        #     groups: ['get:full_company']
+        # invoices:
+        #     groups: ['get:full_company']
+
+App\Entity\CompanyClient:
+    attributes:
+        uuid:
             groups: ['get:light_company', 'get:full_company']
         name:
             groups: ['get:light_company', 'get:full_company']
@@ -36,45 +97,37 @@ App\Entity\Company:
             groups: ['get:light_company', 'get:full_company']
         address:
             groups: ['get:light_company', 'get:full_company']
-        zipcode:
-            groups: ['get:light_company', 'get:full_company']
-        city:
-            groups: ['get:light_company', 'get:full_company']
-        siret:
-            groups: ['get:light_company', 'get:full_company']
-        siren:
-            groups: ['get:light_company', 'get:full_company']
-        region:
-            groups: ['get:light_company', 'get:full_company']
-        vatNumber:
-            groups: ['get:light_company', 'get:full_company']
-        activityType:
-            groups: ['get:light_company', 'get:full_company']
-        website:
-            groups: ['get:light_company', 'get:full_company']
-        numberOfEmployee:
-            groups: ['get:light_company', 'get:full_company']
-        industry:
-            groups: ['get:light_company', 'get:full_company']
-        active:
-            groups: ['get:light_company', 'get:full_company']
-        comments:
-            groups: ['get:light_company', 'get:full_company']
-        users:
-            groups: ['get:full_company']
-        companyClients:
-            groups: ['get:full_company']
-        subscriptions:
-            groups: ['get:full_company']
-        suppliers:
-            groups: ['get:full_company']
-        items:
-            groups: ['get:full_company']
-        projects:
-            groups: ['get:full_company']
-        supplierOrders:
-            groups: ['get:full_company']
-        quotations:
-            groups: ['get:full_company']
-        invoices:
-            groups: ['get:full_company']
+        # zipcode:
+        #     groups: ['get:light_company', 'get:full_company']
+        # city:
+        #     groups: ['get:light_company', 'get:full_company']
+        # siret:
+        #     groups: ['get:light_company', 'get:full_company']
+        # siren:
+        #     groups: ['get:light_company', 'get:full_company']
+        # region:
+        #     groups: ['get:light_company', 'get:full_company']
+        # vatNumber:
+        #     groups: ['get:light_company', 'get:full_company']
+        # activityType:
+        #     groups: ['get:light_company', 'get:full_company']
+        # website:
+        #     groups: ['get:light_company', 'get:full_company']
+        # active:
+        #     groups: ['get:light_company', 'get:full_company']
+        # comments:
+        #     groups: ['get:light_company', 'get:full_company']
+        # createdAt:
+        #     groups: ['get:light_company', 'get:full_company']
+        # updatedAt:
+        #     groups: ['get:light_company', 'get:full_company']
+        # deletedAt:
+        #     groups: ['get:light_company', 'get:full_company']
+        # companyClientOverload:
+        #     groups: ['get:full_company']
+        # quotations:
+        #     groups: ['get:full_company']
+        # companyType:
+        #     groups: ['get:full_company']
+        # invoices:
+        #     groups: ['get:full_company']

@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CompanyClientRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -23,9 +25,11 @@ class CompanyClient
     private ?string $uuid = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message:"Un nom est obligatoire")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message:"Un email de contact est obligatoire")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -71,6 +75,7 @@ class CompanyClient
     private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'companyClients')]
+    #[Assert\NotBlank(message:"Une société de rattachement estobligatoire")]
     private ?Company $company = null;
 
     /**
