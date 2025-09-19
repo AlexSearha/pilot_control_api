@@ -25,7 +25,7 @@ final class UserController extends AbstractController
     )
     {}
 
-    // ---- Admins Routes ----
+    // ---- Super Admin Routes ----
 
     #[Route('/api/users', name: 'app_user_all_users', methods:['GET'])]
     #[IsGranted('ROLE_SUPER_ADMIN')]

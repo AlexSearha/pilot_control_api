@@ -6,6 +6,7 @@ use App\Repository\CompanyRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -20,9 +21,11 @@ class Company
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message:"Une nom est obligatoire")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message:"Un email de contact est obligatoire")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -53,7 +56,7 @@ class Company
     private ?string $website = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $numlberOfEmployee = null;
+    private ?int $numberOfEmployee = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $industry = null;
@@ -150,7 +153,7 @@ class Company
     /**
      * @var Collection<int, Project>
      */
-    #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'comany')]
+    #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'company')]
     private Collection $projects;
 
     /**
@@ -325,14 +328,14 @@ class Company
         return $this;
     }
 
-    public function getNumlberOfEmployee(): ?int
+    public function getNumberOfEmployee(): ?int
     {
-        return $this->numlberOfEmployee;
+        return $this->numberOfEmployee;
     }
 
-    public function setNumlberOfEmployee(?int $numlberOfEmployee): static
+    public function setNumberOfEmployee(?int $numlberOfEmployee): static
     {
-        $this->numlberOfEmployee = $numlberOfEmployee;
+        $this->numberOfEmployee = $numlberOfEmployee;
 
         return $this;
     }
