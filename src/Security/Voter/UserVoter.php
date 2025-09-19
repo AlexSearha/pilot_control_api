@@ -8,11 +8,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class UserVoter extends Voter
 {
-    public const EDIT = 'USER_EDIT';
+    public const EDIT   = 'USER_EDIT';
+    public const DELETE = 'USER_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT]) && $subject instanceof User;
+        return in_array($attribute, [self::EDIT, self::DELETE]) && $subject instanceof User;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -34,8 +35,11 @@ final class UserVoter extends Voter
                     return $user->getCompany() === $subject->getCompany();
                 }
 
-                if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
-                    return true;
+                return false;
+
+            case self::DELETE:
+                if (in_array('ROLE_MANAGER', $user->getRoles())) {
+                    return $user->getCompany() === $subject->getCompany();
                 }
 
                 return false;

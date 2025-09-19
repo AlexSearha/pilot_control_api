@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\CompanyRepository;
 use App\Repository\UserRepository;
+use App\Security\Voter\UserVoter;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -211,7 +212,7 @@ class UserService extends AbstractController
         return $user;
     }
 
-    public function createClientUser(array $payload, string $companyUuid)
+    public function createClientUser(array $payload, string $companyUuid): User
     {
         return $this->createUser($payload, $companyUuid);
     }
@@ -272,5 +273,34 @@ class UserService extends AbstractController
             throw new \Exception("Une erreur est survenue", $e->getCode());
 
         }
+    }
+
+    public function deleteClientUser(string $companyUuid, string $userUuid)
+    {
+        $this->companyService->getOneCompany($companyUuid);
+        return $this->deleteUser($userUuid);
+    }
+
+     public function deleteClientUsers(string $companyUuid, array $payload)
+    {
+        $this->companyService->getOneCompany($companyUuid);
+
+        if (!isset($payload['userUuids'])) {
+            throw new \Exception("Aucune donnée à", Response::HTTP_NOT_FOUND);
+        }
+
+        foreach ($payload['userUuids'] as $userUuid) {
+
+            $user = $this->userRepo->findOneBy(['uuid' => $userUuid]);
+            if (!$user) {
+                throw new \Exception("Utilisateur inconnu", Response::HTTP_NOT_FOUND);
+            }
+
+            $this->denyAccessUnlessGranted(UserVoter::DELETE, $user);
+
+            $this->deleteUser($userUuid);
+        }
+
+        return;
     }
 }

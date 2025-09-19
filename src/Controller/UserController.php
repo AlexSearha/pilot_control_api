@@ -26,6 +26,7 @@ final class UserController extends AbstractController
     {}
 
     // ---- Admins Routes ----
+
     #[Route('/api/users', name: 'app_user_all_users', methods:['GET'])]
     #[IsGranted('ROLE_SUPER_ADMIN')]
     public function getAllUsers(): JsonResponse
@@ -122,8 +123,9 @@ final class UserController extends AbstractController
     }
 
     // ---- Users Routes ----
+
     #[Route('/api/company/{companyUuid}/users', name: 'app_company_get_all_users', methods:['GET'])]
-    #[IsGranted('ROLE_MANAGER')]
+    #[IsGranted('ROLE_EMPLOYEE')]
     public function getClientAllUsers(string $companyUuid): JsonResponse
     {
         try {
@@ -187,4 +189,34 @@ final class UserController extends AbstractController
         }
     }
 
+    #[Route('/api/company/{companyUuid}/user/{userUuid}', name: 'app_company_delete_user', methods:['DELETE'])]
+    #[IsGranted(UserVoter::DELETE, 'user')]
+    public function deleteClientUser(#[MapEntity(mapping: ['userUuid' => 'uuid'])] User $user ,string $companyUuid )
+    {
+
+        try {
+            $this->userService->deleteClientUser($companyUuid, $user->getUuid());
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/users', name: 'app_company_delete_users', methods:['DELETE'])]
+    public function deleteClientUsers(string $companyUuid , Request $request)
+    {
+
+        $payload = $request->getPayload()->all();
+
+        try {
+            $this->userService->deleteClientUsers($companyUuid, $payload);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+
+        }
+    }
 }
