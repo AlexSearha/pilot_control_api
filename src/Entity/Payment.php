@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PaymentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -36,15 +37,18 @@ class Payment
      * @var \DateTimeImmutable|null
      */
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $paymentDate = null;
 
     #[ORM\Column(enumType: PaymentMethodEnum::class)]
     private ?PaymentMethodEnum $paymentMethod = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
          /**

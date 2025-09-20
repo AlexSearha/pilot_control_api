@@ -26,9 +26,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank(message:"Une e-mail est obligatoire")]
-    #[Assert\Email(
-        message: "L'e-mail renseigné n'est pas valide",
-    )]
+    #[Assert\Email(message: "L'e-mail {{ value }} renseigné n'est pas valide")]
     private ?string $email = null;
 
     /**

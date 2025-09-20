@@ -29,6 +29,7 @@ class CompanyClient
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
     #[Assert\NotBlank(message:"Un email de contact est obligatoire")]
     private ?string $email = null;
 
@@ -66,12 +67,15 @@ class CompanyClient
     private ?string $comments = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'companyClients')]

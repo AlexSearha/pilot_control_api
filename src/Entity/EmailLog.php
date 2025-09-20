@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EmailLogRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -24,12 +25,15 @@ class EmailLog
     private ?SmtpConfiguration $smtpConfiguration = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
     private ?string $toEmail = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
     private ?string $ccEmail = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
     private ?string $bccEmail = null;
 
     #[ORM\Column(length: 255)]
@@ -48,12 +52,15 @@ class EmailLog
     private ?string $errorMessage = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $sentAt = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'emailLogs')]
