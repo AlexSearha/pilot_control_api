@@ -180,8 +180,6 @@ class CompanyClientService extends AbstractController
             $companyClient->setCompany($compagny);
         }
 
-        // TODO: Penser à ajouter le set pour CompanyType
-
     }
 
     public function getClientByUuid(string $clientUuid) : CompanyClient

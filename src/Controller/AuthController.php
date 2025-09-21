@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Service\AuthService;
+use App\Service\FormatService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -13,15 +15,23 @@ final class AuthController extends AbstractController
 {
 
     public function __construct(
-        private AuthService $authService
+        private AuthService $authService,
+        private FormatService $format
     ){}
 
     #[Route('/api/registration', name: 'app_auth_registration', methods:['POST'])]
     public function registration(Request $request): JsonResponse
     {
        $payload = $request->getPayload()->all();
+       $companyUuid = $request->query->get('co');
 
-        return $this->authService->registerNewUser($payload);
+        try {
+            $this->authService->registerNewUser($payload, $companyUuid);
+            return $this->format->sendSuccessReponse(null,Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+
+        }
 
     }
 

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Cocur\Slugify\Slugify;
 
 class CompanyService extends AbstractController
 {
@@ -40,7 +41,7 @@ class CompanyService extends AbstractController
 
     public function createCompany(array $payload): Company
     {
-        $newCompny = new Company();
+        $newCompny  = new Company();
 
         if (isset($payload['name'])) {
             $newCompny->setName($payload['name']);
@@ -91,6 +92,7 @@ class CompanyService extends AbstractController
             $newCompny->setComments($payload['comments']);
         }
 
+
         $errors = $this->validator->validate($newCompny);
         if (count($errors) > 0) {
             foreach ($errors as $error) {
@@ -133,6 +135,7 @@ class CompanyService extends AbstractController
     public function updateOneCompany(array $payload, string $companyUuid): Company
     {
         $company = $this->getOneCompany($companyUuid);
+        $slugify = new Slugify();
 
         if (isset($payload['name'])) {
             $company->setName($payload['name']);
@@ -145,6 +148,15 @@ class CompanyService extends AbstractController
             }
 
             $company->setEmail($payload['email']);
+        }
+         if (isset($payload['domaineSlug'])) {
+
+            if (!in_array('ROLE_SUPER_ADMIN',$this->getUser()->getRoles())) {
+                throw new \Exception("Vous n'avez pas les droits pour modifier le nom de domaine", Response::HTTP_UNAUTHORIZED);
+
+            }
+
+            $company->setDomaineSlug($slugify->slugify($payload['domaineSlug']));
         }
         if (isset($payload['address'])) {
             $company->setAddress($payload['address']);
@@ -183,7 +195,10 @@ class CompanyService extends AbstractController
             $company->setComments($payload['comments']);
         }
 
+        $company->setUpdatedAt(new DateTimeImmutable());
+
         $errors = $this->validator->validate($company);
+
         if (count($errors) > 0) {
             foreach ($errors as $error) {
                 $this->errorsToStrigify[] = $error->getMessage();

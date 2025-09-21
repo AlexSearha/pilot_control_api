@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\ItemStatusEnum;
 use App\Enum\ItemUnitEnum;
 use App\Repository\ItemRepository;
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -106,6 +107,9 @@ class Item
     #[ORM\ManyToOne(inversedBy: 'items')]
     private ?Currency $currency = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
      /**
      * Pre persist variables
      */
@@ -132,6 +136,14 @@ class Item
     {
         if ($this->obsolet === null) {
             $this->obsolet = false;
+        }
+    }
+
+    #[ORM\PrePersist]
+    public function setSlugAtInit(): void{
+        if ($this->slug === null) {
+            $slugify = new Slugify();
+            $this->slug = $slugify->slugify($this->getName());
         }
     }
 
@@ -494,6 +506,18 @@ class Item
     public function setCurrency(?Currency $currency): static
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

@@ -27,6 +27,8 @@ class AuthService extends AbstractController
         private MailerService $mailerService,
         private SerializerInterface $serializer,
         private LoggerInterface $logger,
+        private UserService $userService,
+        private CompanyService $companyService
     )
     {}
 
@@ -41,43 +43,25 @@ class AuthService extends AbstractController
      * @param array<string, mixed> $payload  New user data,
      *                                       expected keys: ['email' => string, 'password' => string]
      *
-     * @return JsonResponse
+     * @return User
      *
      * @throws \Exception If an unexpected error occurs during persistence
      */
-    public function registerNewUser(mixed $payload) : JsonResponse
+    public function registerNewUser(array $payload, string|null $companyUuid) : User
     {
-        $email = $payload['email'] ?? null;
-        $password = $payload['password'] ?? null;
-        $errorMessages = [];
+        $company = null;
 
-        $findUser = $this->userRepo->findOneBy(['email' => $email]);
-        if ($findUser) {
-            return $this->formatService->sendErrorReponse("Un compte avec cette adresse e-mail existe déjà.", Response::HTTP_BAD_REQUEST);
+        if ($companyUuid) {
+            $company = $this->companyService->getCompanyByUuid($companyUuid);
         }
 
-        $newUser = new User();
-        $newUser
-            ->setEmail($email)
-            ->setPassword($this->passwordHasher->hashPassword($newUser, $password));
-
-        $errors = $this->validator->validate($newUser);
-
-        if (count($errors) > 0) {
-            foreach ($errors as $error) {
-                $errorMessages[] = $error->getMessage();
-            }
-
-            return $this->formatService->sendErrorReponse(implode(',',$errorMessages), Response::HTTP_FORBIDDEN);
-        }
-
-        $this->em->persist($newUser);
-        $this->em->flush();
+        $newUser =  $this->userService->createUser($payload, $company);
 
         $token = $this->tokenService->generateExpiredToken($newUser, 'email_confirmation');
+
         $this->mailerService->sendSimpleEmail($token, $newUser, 'Confirmation email');
 
-        return $this->json(null, Response::HTTP_CREATED);
+        return $newUser;
     }
 
     /**

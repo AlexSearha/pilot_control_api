@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SupplierRepository;
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -90,6 +91,9 @@ class Supplier
     #[ORM\OneToMany(targetEntity: SupplierOrder::class, mappedBy: 'supplier')]
     private Collection $supplierOrders;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     /**
      * Pre persist variables
      */
@@ -116,6 +120,14 @@ class Supplier
     {
         if ($this->active === null) {
             $this->active = true;
+        }
+    }
+
+    #[ORM\PrePersist]
+    public function setSlugAtInit(): void{
+        if ($this->slug === null) {
+            $slugify = new Slugify();
+            $this->slug = $slugify->slugify($this->getName());
         }
     }
 
@@ -402,6 +414,18 @@ class Supplier
                 $supplierOrder->setSupplier(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

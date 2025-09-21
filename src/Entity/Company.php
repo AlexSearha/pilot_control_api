@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -72,15 +73,12 @@ class Company
     private ?string $uuid = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
     /**
@@ -115,6 +113,14 @@ class Company
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
+        }
+    }
+    #[ORM\PrePersist]
+    public function setDomaineSlugAtInit(): void
+    {
+        if($this->domaineSlug === null) {
+            $slugify = new Slugify();
+            $this->domaineSlug = $slugify->slugify($this->getName());
         }
     }
 
@@ -180,6 +186,9 @@ class Company
      */
     #[ORM\OneToMany(targetEntity: Invoice::class, mappedBy: 'company')]
     private Collection $invoices;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $domaineSlug = null;
 
     public function __construct()
     {
@@ -736,6 +745,18 @@ class Company
                 $invoice->setCompany(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDomaineSlug(): ?string
+    {
+        return $this->domaineSlug;
+    }
+
+    public function setDomaineSlug(?string $domaineSlug): static
+    {
+        $this->domaineSlug = $domaineSlug;
 
         return $this;
     }

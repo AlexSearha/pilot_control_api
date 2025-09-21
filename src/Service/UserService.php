@@ -44,13 +44,13 @@ class UserService extends AbstractController
         return $user;
     }
 
-    public function createUser(array $payload, $compagnyUuid = null)
+    public function createUser(array $payload, $compagny = null)
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune données de reçues", Response::HTTP_NOT_FOUND);
         }
 
-        if (!isset($payload['email']) || !isset($payload['password']) || (!$compagnyUuid && !isset($payload['companyUuid']))) {
+        if (!isset($payload['email']) || !isset($payload['password']) ) {
             throw new \Exception("Email / Mot de passe / Société est manquant", Response::HTTP_BAD_REQUEST);
         }
 
@@ -63,11 +63,11 @@ class UserService extends AbstractController
         $newUser = new User();
         $newUser
             ->setEmail($payload['email'])
-            ->setPassword($this->passwordHasher->hashPassword($newUser, $payload['password']));
+            ->setPassword($payload['password']);
 
-        $compagny = $this->companyService->getOneCompany($compagnyUuid ?? $payload['companyUuid']);
-
-        $newUser->setCompany($compagny);
+        if ($compagny) {
+            $newUser->setCompany($compagny);
+        }
 
         if (isset($payload['lastname'])) {
             $newUser->setLastname($payload['lastname']);
@@ -89,6 +89,7 @@ class UserService extends AbstractController
             $newUser->setRoles($payload['roles']);
         }
 
+
         $errors = $this->validator->validate($newUser);
 
         if (count($errors) > 0) {
@@ -98,6 +99,8 @@ class UserService extends AbstractController
             }
             throw new \Exception(implode(',', $this->errorsStringify), Response::HTTP_BAD_REQUEST);
         }
+
+        $newUser->setPassword($this->passwordHasher->hashPassword($newUser, $payload['password']));
 
         try {
             $this->em->persist($newUser);
@@ -109,6 +112,11 @@ class UserService extends AbstractController
         } catch (\Exception $e) {
             throw new \Exception("une erreur s'est produite", $e->getCode());
         }
+    }
+
+    public function createUserManagerWithToken(array $payload)
+    {
+
     }
 
     public function updateUser(array $payload, string $userUuid)
@@ -192,6 +200,7 @@ class UserService extends AbstractController
         }
     }
 
+
     // ---- User Functions ----
     public function getClientAllUsers(string $companyUuid)
     {
@@ -214,7 +223,8 @@ class UserService extends AbstractController
 
     public function createClientUser(array $payload, string $companyUuid): User
     {
-        return $this->createUser($payload, $companyUuid);
+        $company = $this->companyService->getCompanyByUuid($companyUuid);
+        return $this->createUser($payload, $company);
     }
 
     public function updateClientUser(array $payload, string $companyUuid, string $userUuid)
@@ -281,7 +291,7 @@ class UserService extends AbstractController
         return $this->deleteUser($userUuid);
     }
 
-     public function deleteClientUsers(string $companyUuid, array $payload)
+    public function deleteClientUsers(string $companyUuid, array $payload)
     {
         $this->companyService->getOneCompany($companyUuid);
 

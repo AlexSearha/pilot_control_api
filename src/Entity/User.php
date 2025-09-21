@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Assert\PasswordStrength(
-        minScore: PasswordStrength::STRENGTH_VERY_STRONG,
+        minScore: PasswordStrength::STRENGTH_MEDIUM,
         message: "Mot de passe trop faible, utilisez majuscules, chiffres et caractères spéciaux."
     )]
     private ?string $password = null;

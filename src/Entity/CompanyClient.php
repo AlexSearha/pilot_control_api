@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CompanyClientRepository;
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +11,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Entity(repositoryClass: CompanyClientRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -117,6 +117,14 @@ class CompanyClient
         }
     }
 
+    #[ORM\PrePersist]
+    public function setSlugAtInit(): void{
+        if ($this->slug === null) {
+            $slugify = new Slugify();
+            $this->slug = $slugify->slugify($this->getName());
+        }
+    }
+
     /**
      * @var Collection<int, CompanyClientOverload>
      */
@@ -137,6 +145,9 @@ class CompanyClient
      */
     #[ORM\OneToMany(targetEntity: Invoice::class, mappedBy: 'companyClient')]
     private Collection $invoices;
+
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
 
     public function __construct()
     {
@@ -464,6 +475,18 @@ class CompanyClient
                 $invoice->setCompanyClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\ProjectStatusEnum;
 use App\Repository\ProjectRepository;
+use Cocur\Slugify\Slugify;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -99,6 +100,9 @@ class Project
     #[ORM\OneToMany(targetEntity: Invoice::class, mappedBy: 'project')]
     private Collection $invoices;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     /**
      * Pre persist variables
      */
@@ -117,6 +121,14 @@ class Project
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
+        }
+    }
+
+    #[ORM\PrePersist]
+    public function setSlugAtInit(): void{
+        if ($this->slug === null) {
+            $slugify = new Slugify();
+            $this->slug = $slugify->slugify($this->getName());
         }
     }
 
@@ -432,6 +444,18 @@ class Project
                 $invoice->setProject(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }
