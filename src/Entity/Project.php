@@ -29,7 +29,7 @@ class Project
     private ?Company $company = null;
 
     /**
-     *  Grâce à manyTomany, les projets peuvent etre éditer par plusieur User
+     *
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'projects')]

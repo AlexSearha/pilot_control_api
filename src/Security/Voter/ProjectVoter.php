@@ -2,24 +2,22 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Company;
+use App\Entity\Project;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-final class CompanyVoter extends Voter
+final class ProjectVoter extends Voter
 {
-    public const EDIT       = 'COMPANY_EDIT';
-    public const VIEW       = 'COMPANY_VIEW';
-    public const CREATE     = 'COMPANY_CREATE';
-    public const LIST_ALL   = 'COMPANY_LIST_ALL';
+    public const EDIT = 'PROJECT_EDIT';
+    public const VIEW = 'PROJECT_VIEW';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW, self::CREATE, self::LIST_ALL])
-            && $subject instanceof Company;
+        return in_array($attribute, [self::EDIT, self::VIEW])
+            && $subject instanceof Project;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -34,20 +32,14 @@ final class CompanyVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::EDIT:
-            case self::LIST_ALL:
-            case self::CREATE:
-
-                if (in_array('ROLE_MANAGER', $user->getRoles())) {
-                    return $user->getCompany()->getId()  === $subject->getId();
-                }
+                // logic to determine if the user can EDIT
+                // return true or false
                 break;
 
             case self::VIEW:
-              if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
-                    return $user->getCompany()->getId() === $subject->getId();
-                }
-
-                return false;
+                // logic to determine if the user can VIEW
+                // return true or false
+                break;
         }
 
         return false;

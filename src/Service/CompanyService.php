@@ -25,7 +25,7 @@ class CompanyService extends AbstractController
 
     public function getAllCompanies()
     {
-        return $this->companyRepo->findAll();
+        return $this->companyRepo->findBy(['name' => 'ASC']);
     }
 
     public function getOneCompany(string $uuid): Company
@@ -219,6 +219,15 @@ class CompanyService extends AbstractController
             throw new \Exception('Une erreur est survenue', $e->getCode());
 
         }
+    }
+
+    public function isCompanyExist(Company|null $company)
+    {
+        if (!$company) {
+            throw new \Exception("Société inconnue", Response::HTTP_NOT_FOUND);
+        }
+
+        return $company;
     }
 
     public function getCompanyByUuid(string $copanyUuid): Company

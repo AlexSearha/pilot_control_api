@@ -1,17 +1,17 @@
 App\Entity\User:
     attributes:
         uuid:
-            groups: ['get:auth_me', 'get:full_company']
+            groups: ['get:auth_me', 'get:full_company', 'get:light_project']
         email:
-            groups: ['get:auth_me', 'get:full_company']
+            groups: ['get:auth_me', 'get:full_company', 'get:light_project']
         roles:
-            groups: ['get:auth_me', 'get:full_company']
+            groups: ['get:auth_me', 'get:full_company', 'get:light_project']
         firstname:
-            groups: ['get:auth_me', 'get:full_company']
+            groups: ['get:auth_me', 'get:full_company', 'get:light_project']
         lastname:
-            groups: ['get:auth_me', 'get:full_company']
+            groups: ['get:auth_me', 'get:full_company', 'get:light_project']
         phone:
-            groups: ['get:auth_me', 'get:full_company']
+            groups: ['get:auth_me', 'get:full_company', 'get:light_project']
         theme:
             groups: ['get:auth_me', 'get:full_company']
         jobTitle:
@@ -31,11 +31,11 @@ App\Entity\User:
 App\Entity\Company:
     attributes:
         uuid:
-            groups: ['get:light_company', 'get:full_company', get:auth_me]
+            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project']
         name:
-            groups: ['get:light_company', 'get:full_company', get:auth_me]
+            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project']
         email:
-            groups: ['get:light_company', 'get:full_company', get:auth_me]
+            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project']
         address:
             groups: ['get:light_company', 'get:full_company']
         # zipcode:
@@ -131,3 +131,40 @@ App\Entity\CompanyClient:
         #     groups: ['get:full_company']
         # invoices:
         #     groups: ['get:full_company']
+
+App\Entity\Project:
+    attributes:
+        uuid:
+            groups: ['get:light_project']
+        company:
+            groups: ['get:light_project']
+        address:
+            groups: ['get:light_project']
+        zipcode:
+            groups: ['get:light_project']
+        city:
+            groups: ['get:light_project']
+        slug:
+            groups: ['get:light_project']
+        user:
+            groups: ['get:light_project']
+        region:
+            groups: ['get:light_project']
+        contry:
+            groups: ['get:light_project']
+        startDate:
+            groups: ['get:light_project']
+        endDate:
+            groups: ['get:light_project']
+        status:
+            groups: ['get:light_project']
+        budget:
+            groups: ['get:light_project']
+        comments:
+            groups: ['get:light_project']
+        createdAt:
+            groups: ['get:light_project']
+        updatedAt:
+            groups: ['get:light_project']
+        deletedAt:
+            groups: ['get:light_project']
