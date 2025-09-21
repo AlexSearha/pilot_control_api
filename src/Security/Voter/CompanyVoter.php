@@ -38,16 +38,21 @@ final class CompanyVoter extends Voter
             case self::CREATE:
 
                 if (in_array('ROLE_MANAGER', $user->getRoles())) {
-                    return $user->getCompany()->getId()  === $subject->getId();
+                    if (!$user->getCompany()) return false;
+
+                        return $user->getCompany()->getId()  === $subject->getId();
                 }
+
                 break;
 
             case self::VIEW:
               if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
+                    if (!$user->getCompany()) return false;
+
                     return $user->getCompany()->getId() === $subject->getId();
                 }
 
-                return false;
+                break;
         }
 
         return false;

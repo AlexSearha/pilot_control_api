@@ -9,14 +9,16 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class ProjectVoter extends Voter
 {
-    public const EDIT = 'PROJECT_EDIT';
-    public const VIEW = 'PROJECT_VIEW';
+    public const EDIT   = 'PROJECT_EDIT';
+    public const VIEW   = 'PROJECT_VIEW';
+    public const DELETE = 'PROJECT_DELETE';
+    public const CREATE = 'PROJECT_CREATE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return in_array($attribute, [self::EDIT, self::VIEW, self::CREATE, self::DELETE])
             && $subject instanceof Project;
     }
 
@@ -29,16 +31,21 @@ final class ProjectVoter extends Voter
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::EDIT:
-                // logic to determine if the user can EDIT
-                // return true or false
+            case self::DELETE:
+            case self::CREATE:
+
+                if (in_array('ROLE_MANAGER', $user->getRoles())) {
+                    return $user->getCompany()->getId() === $subject->getCompany()->getId();
+                }
                 break;
 
             case self::VIEW:
-                // logic to determine if the user can VIEW
-                // return true or false
+
+                if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
+                    return $user->getCompany()->getId() === $subject->getCompany()->getId();
+                }
                 break;
         }
 

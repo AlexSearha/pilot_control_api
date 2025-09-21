@@ -42,6 +42,7 @@ final class CompanyClientVoter extends Voter
 
                     return $user->getCompany()->getId() === $subject->getId();
                 }
+                break;
 
             case self::EDIT:
             case self::CREATE:
@@ -52,6 +53,7 @@ final class CompanyClientVoter extends Voter
 
                     return $user->getCompany()->getId() === $subject->getCompany()->getId();
                 }
+                break;
         }
 
         return false;

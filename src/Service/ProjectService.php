@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Repository\ProjectRepository;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ProjectService
 {
@@ -15,6 +14,11 @@ class ProjectService
     public function getAllProjects()
     {
         return $this->projectRepo->findBy([], ['company' => 'ASC']);
+    }
+
+    public function getClientProject(string $companyUuid)
+    {
+        return $this->projectRepo->findBy(['company' =>  $companyUuid ], ['name' => 'ASC']);
     }
 
 }

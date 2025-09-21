@@ -35,14 +35,14 @@ final class UserVoter extends Voter
                     return $user->getCompany() === $subject->getCompany();
                 }
 
-                return false;
+                break;
 
             case self::DELETE:
                 if (in_array('ROLE_MANAGER', $user->getRoles())) {
                     return $user->getCompany() === $subject->getCompany();
                 }
 
-                return false;
+                break;
 
         }
 
