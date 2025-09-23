@@ -168,3 +168,50 @@ App\Entity\Project:
             groups: ['get:light_project']
         deletedAt:
             groups: ['get:light_project']
+
+App\Entity\Item:
+    attributes:
+        uuid:
+            groups: ['get:light_items']
+        company:
+            groups: ['get:light_items']
+        supplier:
+            groups: ['get:light_items']
+        status:
+            groups: ['get:light_items']
+        name:
+            groups: ['get:light_items']
+        description:
+            groups: ['get:light_items']
+        quantity:
+            groups: ['get:light_items']
+        quatityReserved:
+            groups: ['get:light_items']
+        quantityAlertThreshold:
+            groups: ['get:light_items']
+        serialNumber:
+            groups: ['get:light_items']
+        unit:
+            groups: ['get:light_items']
+        price:
+            groups: ['get:light_items']
+        obsolet:
+            groups: ['get:light_items']
+        createdAt:
+            groups: ['get:light_items']
+        updatedAt:
+            groups: ['get:light_items']
+        deletedAt:
+            groups: ['get:light_items']
+        maintenances:
+            groups: ['get:full_items']
+        supplierOrderItems:
+            groups: ['get:full_items']
+        quotationItems:
+            groups: ['get:full_items']
+        invoicesItems:
+            groups: ['get:full_items']
+        currency:
+            groups: ['get:full_items']
+        slug:
+            groups: ['get:full_items']
