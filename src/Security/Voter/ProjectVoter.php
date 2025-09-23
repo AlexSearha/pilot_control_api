@@ -34,6 +34,22 @@ final class ProjectVoter extends Voter
         switch ($attribute) {
             case self::EDIT:
             case self::DELETE:
+                // authorisation only if user is part on the project list
+                if (in_array('ROLE_MANAGER', $user->getRoles())) {
+
+                    if ($user->getCompany()->getId() === $subject->getCompany()->getId()) {
+
+                        foreach ($subject->getUser() as $authorizedUser) {
+
+                            if ($authorizedUser->getId() === $user->getId()) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                break;
+
             case self::CREATE:
 
                 if (in_array('ROLE_MANAGER', $user->getRoles())) {

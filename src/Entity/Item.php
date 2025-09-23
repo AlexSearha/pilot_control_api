@@ -98,12 +98,6 @@ class Item
     #[ORM\OneToMany(targetEntity: InvoiceItem::class, mappedBy: 'item')]
     private Collection $invoiceItems;
 
-    /**
-     * @var Collection<int, Project>
-     */
-    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'items')]
-    private Collection $project;
-
     #[ORM\ManyToOne(inversedBy: 'items')]
     private ?Currency $currency = null;
 
@@ -153,7 +147,6 @@ class Item
         $this->supplierOrderItems = new ArrayCollection();
         $this->quotationItems = new ArrayCollection();
         $this->invoiceItems = new ArrayCollection();
-        $this->project = new ArrayCollection();
     }
 
 
@@ -474,29 +467,6 @@ class Item
         return $this;
     }
 
-    /**
-     * @return Collection<int, Project>
-     */
-    public function getProject(): Collection
-    {
-        return $this->project;
-    }
-
-    public function addProject(Project $project): static
-    {
-        if (!$this->project->contains($project)) {
-            $this->project->add($project);
-        }
-
-        return $this;
-    }
-
-    public function removeProject(Project $project): static
-    {
-        $this->project->removeElement($project);
-
-        return $this;
-    }
 
     public function getCurrency(): ?Currency
     {
