@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SupplierOrderRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -33,11 +32,9 @@ class SupplierOrder
     private ?Currency $currency = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $orderDate = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $expectedDeliveryDate = null;
 
     #[ORM\Column(type:Types::DECIMAL)]
@@ -47,15 +44,12 @@ class SupplierOrder
     private ?string $comments = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
     /**
@@ -68,20 +62,20 @@ class SupplierOrder
      * Pre persist variables
      */
     #[ORM\PrePersist]
-    public function generateUuid(): void
+    public function setDateTimeCreateAndupdateAtInit(): void
     {
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setDateTimeCreateAndupdateAtInit(): void
-    {
         if($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
+        }
+
+        if ($this->orderDate === null) {
+            $this->orderDate = new DateTimeImmutable();
         }
     }
 
