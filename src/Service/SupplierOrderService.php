@@ -6,6 +6,7 @@ use App\Entity\Company;
 use App\Entity\Supplier;
 use App\Entity\SupplierOrder;
 use App\Repository\SupplierOrderRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -101,6 +102,39 @@ class SupplierOrderService
 
     }
 
+    public function deleteClientSupplierOrder(?Company $company, ?Supplier $supplier, ?SupplierOrder $supplierOrder) :void
+    {
+        $this->companyService->isCompanyExist($company);
+        $this->supplierServices->isSupplierExist($supplier);
+        $this->isSupplierOrderExist($supplierOrder);
+
+        $supplierOrder->setDeletedAt(new DateTimeImmutable());
+
+         try {
+            $this->em->flush();
+        } catch (\Exception $e) {
+         throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+
+        }
+    }
+
+    public function deleteClientSupplierOrders(?Company $company, ?Supplier $supplier, array $payload) :void
+    {
+        $this->companyService->isCompanyExist($company);
+        $this->supplierServices->isSupplierExist($supplier);
+
+        if (!isset($payload['supplierOrders']) || count($payload['supplierOrders']) === 0) {
+            throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
+
+        }
+
+        foreach ($payload['supplierOrders'] as $supplierOrder) {
+            $this-> deleteClientSupplierOrder($company, $supplier, $supplierOrder);
+        }
+
+
+
+    }
     public function isSupplierOrderExist(?SupplierOrder $supplierOrder) : void
     {
         if (!$supplierOrder) {

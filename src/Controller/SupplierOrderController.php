@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -61,7 +62,7 @@ final class SupplierOrderController extends AbstractController
     }
 
     #[Route('/api/company/{companyUuid}/supplier/{supplierUuid}/order/{orderUuid}', name: 'app_get_client_supplier_order', methods:['GET'])]
-    #[IsGranted(SupplierOrderVoter::VIEW, 'supplier')]
+    #[IsGranted(SupplierOrderVoter::VIEW, 'supplierOrder')]
     public function getClientSupplierOrder(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
@@ -99,4 +100,43 @@ final class SupplierOrderController extends AbstractController
 
         }
     }
+
+    #[Route('/api/company/{companyUuid}/supplier/{supplierUuid}/order/{orderUuid}', name: 'app_delete_client_supplier_order', methods:['DELETE'])]
+    #[IsGranted(SupplierOrderVoter::DELETE, 'supplierOrder')]
+    public function deleteClientSupplierOrder(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
+        #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
+        #[MapEntity(mapping: ['orderUuid' => 'uuid'])] SupplierOrder $supplierOrder
+        ): JsonResponse
+    {
+        try {
+            $this->supplierOrderService->deleteClientSupplierOrder($company, $supplier, $supplierOrder);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/supplier/{supplierUuid}/orders', name: 'app_delete_client_supplier_orders', methods:['DELETE'])]
+    #[IsGranted(SupplierOrderVoter::DELETE, 'supplierOrder')]
+    public function deleteClientSupplierOrders(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
+        #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
+        Request $request
+        ): JsonResponse
+    {
+        $payload = $request->getPayload()->all();
+
+        try {
+            $this->supplierOrderService->deleteClientSupplierOrders($company, $supplier, $payload);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+
+        }
+    }
+
 }
