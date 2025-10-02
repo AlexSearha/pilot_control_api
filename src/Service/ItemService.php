@@ -17,6 +17,7 @@ class ItemService
         private ItemRepository $itemRepo,
         private CompanyService $companyService,
         private ValidatorInterface $validator,
+        private SupplierServices $supplierServices,
         private EntityManagerInterface $em
     )
     {}
@@ -26,30 +27,36 @@ class ItemService
         return $this->itemRepo->findBy([],['name' => "ASC"]);
     }
 
-    public function getClientAllItems(Company|null $company)
+    public function getClientAllItems(?Company $company): array
     {
         $this->companyService->isCompanyExist($company);
 
         return $this->itemRepo->findBy(['company' => $company->getId()], ['name' => 'ASC']);
     }
 
-    public function getClientItem(Company|null $company, Item|null $item)
+    public function getClientItem(?Company $company, ?Item $item): void
     {
         $this->companyService->isCompanyExist($company);
         $this->isItemExist($item);
 
     }
 
-    public function createClientItem(Company|null $company, array $payload)
+    public function createClientItem(?Company $company, array $payload)
     {
+        if (count($payload) === 0) {
+            throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
+        }
+
        $this->companyService->isCompanyExist($company);
 
        $newItem = new Item();
 
        $newItem->setCompany($company);
 
-       // TODO: Ajouter le supplier des qu'il sera mis en place
-
+       if (isset($payload['supplier'])) {
+            $supplier = $this->supplierServices->findOneSupplier($payload['supplier']);
+            $newItem->setSupplier($supplier);
+       }
        if (isset($payload['name'])) {
             $newItem->setName($payload['name']);
        }
@@ -97,6 +104,67 @@ class ItemService
             $this->em->refresh($newItem);
 
             return $newItem;
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function updateClientItem(?Company $company, ?Item $item, array $payload) : Item
+    {
+        if (count($payload) === 0) {
+            throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->companyService->isCompanyExist($company);
+
+        if (isset($payload['supplier'])) {
+            $supplier = $this->supplierServices->findOneSupplier($payload['supplier']);
+            $item->setSupplier($supplier);
+        }
+        if (isset($payload['name'])) {
+                $item->setName($payload['name']);
+        }
+        if (isset($payload['status'])) {
+                $item->setStatus($payload['status']);
+        }
+        if (isset($payload['description'])) {
+                $item->setDescription($payload['description']);
+        }
+        if (isset($payload['quantity'])) {
+                $item->setQuantity($payload['quantity']);
+        }
+        if (isset($payload['quatityReserved'])) {
+                $item->setQuatityReserved($payload['quatityReserved']);
+        }
+        if (isset($payload['quantityAlertThreshold'])) {
+                $item->setQuantityAlertThreshold($payload['quantityAlertThreshold']);
+        }
+        if (isset($payload['serialNumber'])) {
+                $item->setSerialNumber($payload['serialNumber']);
+        }
+        if (isset($payload['unit'])) {
+                $item->setUnit($payload['unit']);
+        }
+        if (isset($payload['price'])) {
+                $item->setPrice($payload['price']);
+        }
+
+
+       $errors = $this->validator->validate($item);
+
+         if (count($errors) > 0) {
+            foreach ($errors as $error) {
+                $this->errorsToStrigify[] = $error->getMessage();
+            }
+
+            throw new \Exception(implode(",", $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
+         }
+
+         try {
+            $this->em->flush();
+            $this->em->refresh($item);
+            return $item;
 
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), $e->getCode());

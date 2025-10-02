@@ -104,16 +104,21 @@ class Invoice
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setDateTimeCreateAndupdateAtInit(): void
-    {
         if($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
         }
+    }
+
+    /**
+     * Pre update variables
+     */
+    #[ORM\PreUpdate]
+    public function setPreUpdate() : void
+    {
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function __construct()

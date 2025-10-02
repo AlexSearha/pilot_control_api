@@ -131,10 +131,8 @@ class SupplierOrderService
         foreach ($payload['supplierOrders'] as $supplierOrder) {
             $this-> deleteClientSupplierOrder($company, $supplier, $supplierOrder);
         }
-
-
-
     }
+
     public function isSupplierOrderExist(?SupplierOrder $supplierOrder) : void
     {
         if (!$supplierOrder) {

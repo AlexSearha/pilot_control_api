@@ -91,7 +91,7 @@ class CompanyClientService extends AbstractController
             $newCompanyClient->setVatNumber($payload['vatNumber']);
         }
         if (isset($payload['activityType'])) {
-            $newCompanyClient->setActiveTrue($payload['activityType']);
+            $newCompanyClient->setActive($payload['activityType']);
         }
         if (isset($payload['website'])) {
             $newCompanyClient->setWebsite($payload['website']);
@@ -163,8 +163,8 @@ class CompanyClientService extends AbstractController
         if (isset($payload['vatNumber'])) {
             $companyClient->setVatNumber($payload['vatNumber']);
         }
-        if (isset($payload['activityType'])) {
-            $companyClient->setActiveTrue($payload['activityType']);
+        if (isset($payload['activity'])) {
+            $companyClient->setActive($payload['activity']);
         }
         if (isset($payload['website'])) {
             $companyClient->setWebsite($payload['website']);

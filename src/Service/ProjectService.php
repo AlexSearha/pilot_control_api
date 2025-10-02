@@ -182,8 +182,6 @@ class ProjectService extends AbstractController
         // TODO: Ajouter la gestion des add et remove de invoices une fois que ce sera implanté
         // TODO: Ajouter la gestion des add et remove de Quotations une fois que ce sera implanté
 
-        $project->setUpdatedAt(new DateTimeImmutable());
-
         $errors = $this->validator->validate($project);
 
         if (count($errors) > 0) {

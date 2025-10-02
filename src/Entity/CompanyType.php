@@ -49,22 +49,28 @@ class CompanyType
      * Pre persist variables
      */
     #[ORM\PrePersist]
-    public function generateUuid(): void
+    public function setPrePersist(): void
     {
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setDateTimeCreateAndupdateAtInit(): void
-    {
         if($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
         }
     }
+
+    /**
+     * Pre update variables
+     */
+    #[ORM\PreUpdate]
+    public function setPreUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
 
     /**
      * @var Collection<int, Company>

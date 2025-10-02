@@ -83,43 +83,37 @@ class CompanyClient
      * Pre persist variables
      */
     #[ORM\PrePersist]
-    public function setActiveTrue(): void
+    public function setPrePersist(): void
     {
-        $this->active = true;
-    }
+        if ($this->active === null) {
+            $this->active = true;
+        }
 
-    #[ORM\PrePersist]
-    public function generateUuid(): void
-    {
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-    }
-
-    #[ORM\PrePersist]
-    public function setDateTimeCreateAndupdateAtInit(): void
-    {
         if($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
         }
-    }
-
-    #[ORM\PrePersist]
-    public function setUserActiveAtInit() : void
-    {
         if ($this->active === null) {
             $this->active = true;
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setSlugAtInit(): void{
         if ($this->slug === null) {
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->getName());
         }
+    }
+
+    /**
+     * Pre update variables
+     */
+    #[ORM\PreUpdate]
+    public function setPreUpdate() : void
+    {
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**

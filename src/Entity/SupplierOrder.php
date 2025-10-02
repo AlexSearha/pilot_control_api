@@ -79,6 +79,15 @@ class SupplierOrder
         }
     }
 
+    /**
+     * Pre update variables
+     */
+    #[ORM\PreUpdate]
+    public function setPreUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function __construct()
     {
         $this->supplierOrderItems = new ArrayCollection();

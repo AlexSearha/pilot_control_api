@@ -197,6 +197,15 @@ class SupplierServices
         }
     }
 
+    public function findOneSupplier(string $supplierUuid) : Supplier
+    {
+        $supplier = $this->supplierRepo->findOneBy(['uuid' => $supplierUuid]);
+
+        $this->isSupplierExist($supplier);
+
+        return $supplier;
+    }
+
     public function isSupplierExist(?Supplier $supplier): void
     {
         if (!$supplier) {

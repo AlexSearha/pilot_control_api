@@ -115,48 +115,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setDateTimeCreateAndupdateAtInit(): void
-    {
         if($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setUserConfirmedAtInit() : void
-    {
         if ($this->userConfirmed === null) {
             $this->userConfirmed = false;
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setUserActiveAtInit() : void
-    {
         if ($this->active === null) {
             $this->active = true;
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setThemeAtInit() : void
-    {
         if ($this->theme === null) {
             $this->theme = "light";
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setRoleAtInit() : void
-    {
         if ($this->roles === []) {
             $this->roles = ["ROLE_EMPLOYEE"];
         }
+    }
+
+    /**
+     * Pre update variables
+     */
+    #[ORM\PreUpdate]
+    public function setPreUpdate(): void
+    {
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function __construct()

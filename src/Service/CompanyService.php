@@ -195,8 +195,6 @@ class CompanyService extends AbstractController
             $company->setComments($payload['comments']);
         }
 
-        $company->setUpdatedAt(new DateTimeImmutable());
-
         $errors = $this->validator->validate($company);
 
         if (count($errors) > 0) {

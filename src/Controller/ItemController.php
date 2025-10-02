@@ -97,4 +97,26 @@ final class ItemController extends AbstractController
         }
     }
 
+    #[Route('/api/company/{companyUuid}/item/{itemUuid}', name: 'item_update_client_item', methods:['PATCH'])]
+    #[IsGranted(ItemVoter::EDIT, 'item')]
+    public function updateClienItem(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
+        #[MapEntity(mapping: ['itemUuid' => 'uuid'])] Item $item,
+        Request $request
+    ): JsonResponse
+    {
+        $payload = $request->getPayload()->all();
+
+        try {
+
+            $items = $this->itemService->updateClientItem($company, $item, $payload);
+            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_items']);
+            return $this->format->sendSuccessSerializeResponse($serialzeData);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+
 }

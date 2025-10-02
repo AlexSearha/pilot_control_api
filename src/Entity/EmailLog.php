@@ -70,16 +70,12 @@ class EmailLog
      * Pre persist variables
      */
     #[ORM\PrePersist]
-    public function generateUuid(): void
+    public function setPrePersist(): void
     {
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-    }
 
-    #[ORM\PrePersist]
-    public function setDateTimeCreateAndupdateAtInit(): void
-    {
         if($this->createdAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;

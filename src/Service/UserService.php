@@ -164,8 +164,6 @@ class UserService extends AbstractController
             $user->setRoles($payload['roles']);
         }
 
-        $user->setUpdatedAt(new DateTimeImmutable());
-
         try {
             $this->em->flush();
             $this->em->refresh($user);
