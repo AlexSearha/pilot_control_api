@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -33,7 +34,7 @@ final class ItemController extends AbstractController
     {
         $items = $this->itemService->getAllItems();
 
-        $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_items']);
+        $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_item']);
 
         return $this->format->sendSuccessSerializeResponse($serialzeData);
     }
@@ -48,7 +49,7 @@ final class ItemController extends AbstractController
 
             $items = $this->itemService->getClientAllItems($company);
 
-            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_items']);
+            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_item']);
 
             return $this->format->sendSuccessSerializeResponse($serialzeData);
 
@@ -67,7 +68,7 @@ final class ItemController extends AbstractController
         try {
 
             $items = $this->itemService->getClientItem($company, $item);
-            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_items']);
+            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_item']);
 
             return $this->format->sendSuccessSerializeResponse($serialzeData);
 
@@ -88,7 +89,7 @@ final class ItemController extends AbstractController
         try {
 
             $items = $this->itemService->createClientItem($company, $payload);
-            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_items']);
+            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_item']);
 
             return $this->format->sendSuccessSerializeResponse($serialzeData);
 
@@ -110,7 +111,7 @@ final class ItemController extends AbstractController
         try {
 
             $items = $this->itemService->updateClientItem($company, $item, $payload);
-            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_items']);
+            $serialzeData = $this->serializer->serialize($items, 'json', ['groups' => 'get:light_item']);
             return $this->format->sendSuccessSerializeResponse($serialzeData);
 
         } catch (\Exception $e) {
@@ -118,5 +119,40 @@ final class ItemController extends AbstractController
         }
     }
 
+    #[Route('/api/company/{companyUuid}/item/{itemUuid}', name: 'item_delete_client_item', methods:['DELETE'])]
+    #[IsGranted(ItemVoter::DELETE, 'item')]
+    public function deleteClienItem(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
+        #[MapEntity(mapping: ['itemUuid' => 'uuid'])] Item $item,
+    ): JsonResponse
+    {
+        try {
+
+            $this->itemService->deleteItem($company, $item);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/items', name: 'item_delete_client_items', methods:['DELETE'])]
+    #[IsGranted(CompanyVoter::DELETE, 'company')]
+    public function deleteClienItems(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
+        Request $request
+    ): JsonResponse
+    {
+        $payload = $request->getPayload()->all();
+
+        try {
+
+            $this->itemService->deleteItems($company, $payload);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
 
 }

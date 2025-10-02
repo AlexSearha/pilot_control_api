@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Company;
 use App\Entity\Item;
 use App\Repository\ItemRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -117,6 +118,7 @@ class ItemService
         }
 
         $this->companyService->isCompanyExist($company);
+        $this->isItemExist($item);
 
         if (isset($payload['supplier'])) {
             $supplier = $this->supplierServices->findOneSupplier($payload['supplier']);
@@ -161,7 +163,7 @@ class ItemService
             throw new \Exception(implode(",", $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
          }
 
-         try {
+        try {
             $this->em->flush();
             $this->em->refresh($item);
             return $item;
@@ -171,7 +173,46 @@ class ItemService
         }
     }
 
-    public function isItemExist(Item|null $item): Item
+    public function deleteItem(?Company $company, ?Item $item) :void
+    {
+        $this->companyService->isCompanyExist($company);
+        $this->isItemExist($item);
+
+        $item->setdeletedAt(new DateTimeImmutable());
+
+        try {
+            $this->em->flush();
+
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function deleteItems(?Company $company, array $payload) :void
+    {
+        $this->companyService->isCompanyExist($company);
+
+        if (!isset($payload['items']) || count($payload['items']) === 0) {
+            throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
+        }
+
+        foreach ($payload['items'] as $item) {
+            $findItem = $this->findClientItem($item);
+            $this->deleteItem($company, $findItem);
+        }
+
+    }
+
+    public function findClientItem(string $itemUuid): Item
+    {
+        $item = $this->itemRepo->findOneBy(['uuid' => $itemUuid]);
+        $this->isItemExist($item);
+
+        return $item;
+
+    }
+
+    public function isItemExist(?Item $item): Item
     {
         if (!$item) {
             throw new \Exception("Article inconnu", Response::HTTP_NOT_FOUND);

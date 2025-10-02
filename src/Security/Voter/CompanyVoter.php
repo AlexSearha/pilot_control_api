@@ -13,12 +13,13 @@ final class CompanyVoter extends Voter
     public const VIEW       = 'COMPANY_VIEW';
     public const CREATE     = 'COMPANY_CREATE';
     public const LIST_ALL   = 'COMPANY_LIST_ALL';
+    public const DELETE     = 'COMPANY_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW, self::CREATE, self::LIST_ALL])
+        return in_array($attribute, [self::EDIT, self::VIEW, self::CREATE, self::LIST_ALL, self::DELETE])
             && $subject instanceof Company;
     }
 
@@ -36,7 +37,7 @@ final class CompanyVoter extends Voter
             case self::EDIT:
             case self::LIST_ALL:
             case self::CREATE:
-
+            case self::DELETE:
                 if (in_array('ROLE_MANAGER', $user->getRoles())) {
                     if (!$user->getCompany()) return false;
 
