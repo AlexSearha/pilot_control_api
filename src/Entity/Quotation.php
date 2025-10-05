@@ -64,15 +64,12 @@ class Quotation
     private ?string $comments = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
     /**
@@ -95,6 +92,10 @@ class Quotation
     {
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
+        }
+
+        if ($this->status === null) {
+            $this->status = QuotationStatusEnum::DRAFT;
         }
 
         if($this->createdAt === null && $this->updatedAt === null) {
