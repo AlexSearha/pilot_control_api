@@ -23,7 +23,8 @@ class QuotationService extends AbstractController
         private CompanyClientService $companyClientService,
         private UserService $userService,
         private ValidatorInterface $validator,
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private QuotationItemService $quotationItemService
     ) {}
 
     public function getAllQuotations()
@@ -52,8 +53,18 @@ class QuotationService extends AbstractController
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
+        if (!isset($payload['quotationItems'])) {
+            throw new \Exception('Aucun article de renseigné', Response::HTTP_BAD_REQUEST);
+        }
+
         $newQuotation = new Quotation();
         $newQuotation->setCompany($company);
+
+        foreach ($payload['quotationItems'] as $quotationItemPayload) {
+            /** @var array $quotationItemPayload */
+            $newQuotationItem = $this->quotationItemService->createQuotationItem($newQuotation, $quotationItemPayload);
+            $newQuotation->addQuotationItem($newQuotationItem);
+        }
 
         if (isset($payload['title'])) {
             $newQuotation->setTitle($payload['title']);
@@ -81,7 +92,7 @@ class QuotationService extends AbstractController
         }
         if (isset($payload['project'])) {
             $project = $this->projectService->getOneClientProject($payload['project']);
-            $newQuotation->setComments($project);
+            $newQuotation->setProject($project);
         }
         if (isset($payload['currency'])) {
             $currency = null; // TODO: A renseigner des que Currency est OK
@@ -95,7 +106,6 @@ class QuotationService extends AbstractController
             $user = $this->userService->getOneUser($payload['user']);
             $newQuotation->setCreatedBy($user);
         }
-
 
         $errors = $this->validator->validate($newQuotation);
 
@@ -129,6 +139,23 @@ class QuotationService extends AbstractController
 
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_NOT_FOUND);
+        }
+
+        if (isset($payload['quotationItemsAdd'])) {
+            foreach ($payload['quotationItemsAdd'] as $quotationItemPayload) {
+                /** @var array $quotationItemPayload */
+                $newQuotationItem = $this->quotationItemService->createQuotationItem($quotation, $quotationItemPayload);
+                $quotation->addQuotationItem($newQuotationItem);
+            }
+        }
+
+         if (isset($payload['quotationItemsRemove'])) {
+            foreach ($payload['quotationItemsRemove'] as $quotationItemUuid) {
+
+                $quotationItem = $this->quotationItemService->findClientQuotationItemByUuid($quotationItemUuid);
+                $quotation->removeQuotationItem($quotationItem);
+                $this->quotationItemService->deleteQuotationItem($quotationItem);
+            }
         }
 
         if (isset($payload['title'])) {

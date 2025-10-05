@@ -45,16 +45,11 @@ class InvoiceItem
     private ?float $totalPrice = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
-    private ?\DateTimeImmutable $deletedAt = null;
 
      /**
      * Pre persist variables
@@ -208,15 +203,4 @@ class InvoiceItem
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeImmutable
-    {
-        return $this->deletedAt;
-    }
-
-    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
 }

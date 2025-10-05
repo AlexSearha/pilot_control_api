@@ -47,8 +47,8 @@ class Invoice
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $issueDate = null;
 
-        /**
-         * Date d'écheance du paiement
+    /**
+     * Date d'écheance du paiement
      *
      * @var \DateTimeImmutable|null
      */

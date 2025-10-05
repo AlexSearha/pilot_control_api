@@ -40,12 +40,12 @@ class InvoiceService extends AbstractController
     }
 
     // TODO: A CONTINUER
-    public function createClientInvoice(?Company $company, array $payload) : Invoice
-    {
-        $this->companyService->isCompanyExist($company);
+    // public function createClientInvoice(?Company $company, array $payload) : Invoice
+    // {
+    //     $this->companyService->isCompanyExist($company);
 
 
-    }
+    // }
 
     public function isInvoiceExist(?Invoice $invoice) : void
     {
