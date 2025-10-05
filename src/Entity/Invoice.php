@@ -53,7 +53,6 @@ class Invoice
      * @var \DateTimeImmutable|null
      */
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $dueDate = null;
 
     #[ORM\Column(enumType: InvoiceStatusEnum::class)]
@@ -72,15 +71,12 @@ class Invoice
     private ?string $comments = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'invoices')]

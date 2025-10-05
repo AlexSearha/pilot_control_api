@@ -23,12 +23,12 @@ class QuotationItemService extends AbstractController
     )
     {}
 
-    public function getAllQuotatioItems()
+    public function getAllQuotationItems(): array
     {
         return $this->quotationItemRepo->findBy([], ['createdAt' => 'ASC']);
     }
 
-    public function getClientAllQuotationItems(?Item $item)
+    public function getClientAllQuotationItems(?Item $item): array
     {
         $this->itemService->isItemExist($item);
 

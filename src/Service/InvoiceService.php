@@ -16,6 +16,7 @@ class InvoiceService extends AbstractController
         private InvoiceRepository $invoiceRepo,
         private ValidatorInterface $validator,
         private EntityManagerInterface $em,
+        private InvoiceItemService $invoiceItemService,
         private CompanyService $companyService
     ) {}
 
@@ -39,13 +40,61 @@ class InvoiceService extends AbstractController
         return $invoice;
     }
 
-    // TODO: A CONTINUER
-    // public function createClientInvoice(?Company $company, array $payload) : Invoice
-    // {
-    //     $this->companyService->isCompanyExist($company);
+    public function createClientInvoice(?Company $company, array $payload): Invoice
+    {
+        $this->companyService->isCompanyExist($company);
+
+        if (count($payload) === 0 ) {
+            throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!isset($payload['invoiceItems'])) {
+            throw new \Exception('Aucun article de renseigné', Response::HTTP_BAD_REQUEST);
+        }
+
+        $newInvoice = new Invoice();
+        $newInvoice->setCompany($company);
+
+        foreach ($payload['invoiceItems'] as $invoiceItemPayload) {
+            /** @var array $invoiceItemPayload */
+            $newQuotationItem = $this->invoiceItemService->createInvoiceItem($newInvoice, $invoiceItemPayload);
+            $newInvoice->addInvoiceItem($newQuotationItem);
+        }
+
+        if (isset($payload['invoiceNumber'])) {
+            $newInvoice->setInvoiceNumber($payload['invoiceNumber']);
+        }
+        if (isset($payload['invoiceNumber'])) {
+            $newInvoice->setInvoiceNumber($payload['invoiceNumber']);
+        }
+
+        // TODO: Continuer l'intégration des element de l'entité INVOICE
 
 
-    // }
+        $errors = $this->validator->validate($newInvoice);
+
+        if (count($errors) > 0) {
+
+            foreach ($errors as $error) {
+                $this->errorToStringify[] = $error->getMessage();
+            }
+
+            throw new \Exception(implode(',', $this->errorToStringify), Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->em->persist($newInvoice);
+            $this->em->flush();
+            $this->em->refresh($newInvoice);
+
+            return $newInvoice;
+
+        } catch (\Exception $e) {
+
+            throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+
+        }
+    }
 
     public function isInvoiceExist(?Invoice $invoice) : void
     {
