@@ -26,21 +26,30 @@ class ProjectService extends AbstractController
     )
     {}
 
-    public function getAllProjects()
+    public function getAllProjects(): array
     {
         return $this->projectRepo->findBy([], ['company' => 'ASC']);
     }
 
-    public function getClientProjects(string $companyUuid)
+    public function getClientProjects(string $companyUuid): array
     {
         return $this->projectRepo->findBy(['company' =>  $companyUuid ], ['name' => 'ASC']);
     }
 
-    public function getOneClientProject(Project $project)
+    public function getOneClientProject(Project $project): object
     {
         $this->isPojectExist($project);
 
         return $this->projectRepo->findOneBy(['uuid' => $project->getUuid()]);
+    }
+
+    public function findProjectByUuid(string $projectUuid) : Project
+    {
+        $project = $this->projectRepo->findOneBy(['uuid' => $projectUuid]);
+
+        $this->isPojectExist($project);
+
+        return $project;
     }
 
     public function createProject(Company|null $company, array $payload)

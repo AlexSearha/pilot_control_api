@@ -23,21 +23,26 @@ class QuotationItem
     private ?string $uuid = null;
 
     #[ORM\ManyToOne(inversedBy: 'quotationItems')]
+    #[Assert\NotNull]
     private ?Quotation $quotation = null;
 
     #[ORM\ManyToOne(inversedBy: 'quotationItems')]
+    #[Assert\NotNull]
     private ?Item $item = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?int $quantity = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?ItemUnitEnum $unit = null;
 
     #[ORM\Column(type:Types::DECIMAL)]
+    #[Assert\NotNull]
     private ?float $totalPrice = null;
 
     #[ORM\Column]

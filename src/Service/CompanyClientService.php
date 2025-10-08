@@ -51,6 +51,15 @@ class CompanyClientService extends AbstractController
 
     }
 
+    public function findCompanyClientByUuid(string $companyClientUuid) : CompanyClient
+    {
+        $compagnyClient = $this->companyClientRepo->findOneBy(['uuid' => $companyClientUuid]);
+
+        $this->isCompanyClientExist($compagnyClient);
+
+        return $compagnyClient;
+    }
+
     public function createCompanyClient(array $payload, string $companyUuid): CompanyClient
     {
         $company = $this->companyService->getCompanyByUuid($companyUuid);

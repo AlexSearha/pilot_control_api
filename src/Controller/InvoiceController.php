@@ -11,6 +11,8 @@ use App\Service\InvoiceService;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -61,6 +63,78 @@ final class InvoiceController extends AbstractController
         try {
 
             $invoice = $this->invoiceService->getOneClientInvoice($company, $invoice);
+            $serialzeData = $this->serializer->serialize($invoice, 'json', ['groups' => 'get:light_invoice']);
+            return $this->format->sendSuccessSerializeResponse($serialzeData);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/invoice', name: 'create_client_invoice', methods:['POST'])]
+    #[IsGranted(CompanyVoter::CREATE, 'company')]
+    public function createClientInvoice(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company, Request $request): JsonResponse
+    {
+        $payload = $request->getPayload()->all();
+
+        try {
+
+            $invoice = $this->invoiceService->createClientInvoice($company, $payload);
+            $serialzeData = $this->serializer->serialize($invoice, 'json', ['groups' => 'get:light_invoice']);
+            return $this->format->sendSuccessSerializeResponse($serialzeData);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/invoice/{invoiceUuid}', name: 'update_one_invoice', methods:['PATCH'])]
+    #[IsGranted(InvoiceVoter::VIEW, 'invoice')]
+    public function updateClientInvoice(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
+        #[MapEntity(mapping: ['invoiceUuid' => 'uuid'])] ?Invoice $invoice,
+        Request $request
+        ): JsonResponse
+    {
+        $payload = $request->getPayload()->all();
+
+        try {
+
+            $invoice = $this->invoiceService->updateClientInvoice($company, $invoice, $payload);
+            $serialzeData = $this->serializer->serialize($invoice, 'json', ['groups' => 'get:light_invoice']);
+            return $this->format->sendSuccessSerializeResponse($serialzeData);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/invoice/{invoiceUuid}', name: 'delete_one_invoice', methods:['DELETE'])]
+    #[IsGranted(InvoiceVoter::DELETE, 'invoice')]
+    public function deletelientInvoice(
+        #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
+        #[MapEntity(mapping: ['invoiceUuid' => 'uuid'])] ?Invoice $invoice,
+        ): JsonResponse
+    {
+        try {
+
+            $invoice = $this->invoiceService->deleteClientInvoice($company, $invoice);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
+
+        } catch (\Exception $e) {
+            return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route('/api/company/{companyUuid}/invoices', name: 'delete_client_invoices', methods:['DELETE'])]
+    #[IsGranted(CompanyVoter::CREATE, 'company')]
+    public function deleteClientInvoices(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company, Request $request): JsonResponse
+    {
+        $payload = $request->getPayload()->all();
+
+        try {
+
+            $invoice = $this->invoiceService->createClientInvoice($company, $payload);
             $serialzeData = $this->serializer->serialize($invoice, 'json', ['groups' => 'get:light_invoice']);
             return $this->format->sendSuccessSerializeResponse($serialzeData);
 

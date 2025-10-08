@@ -37,6 +37,15 @@ class QuotationService extends AbstractController
         return $this->quotationRepo->findBy(['company' => $company->getId()], ['createAt' => 'ASC']);
     }
 
+    public function findQuotationByUuid(string $quotationUuuid) : Quotation
+    {
+        $quotation =  $this->quotationRepo->findOneBy(['uuid' => $quotationUuuid]);
+
+        $this->isQuotationExist($quotation);
+
+        return $quotation;
+    }
+
     public function getOneClientQuotation(?Company $company, ?Quotation $quotation) : object
     {
         $this->companyService->isCompanyExist($company);
