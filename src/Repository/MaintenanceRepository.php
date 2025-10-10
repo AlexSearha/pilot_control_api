@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Company;
 use App\Entity\Maintenance;
+use App\Service\CompanyService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -11,33 +13,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MaintenanceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private CompanyService $companyService)
     {
         parent::__construct($registry, Maintenance::class);
     }
 
-//    /**
-//     * @return Maintenance[] Returns an array of Maintenance objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?Maintenance
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findMaintenanceByCompany(?Company $company): array
+    {
+        $this->companyService->isCompanyExist($company);
+
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.item', 'i')
+            ->where('i.company = :companyId')
+            ->orderBy('i.company', 'ASC')
+            ->setParameter('companyId', $company->getId())
+            ->getQuery()
+            ->getResult();
+    }
 }

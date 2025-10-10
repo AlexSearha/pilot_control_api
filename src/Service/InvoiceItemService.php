@@ -171,9 +171,7 @@ class InvoiceItemService extends AbstractController
 
         foreach ($payload['InvoiceItems'] as $invoiceItemUuid) {
 
-            $invoiceItem = $this->invoiceItemRepo->findOneBy(['uuid' => $invoiceItemUuid]);
-
-            $this->deleteInvoiceItem($invoiceItem);
+            $this->deleteInvoiceItemByUuid($invoiceItemUuid);
         }
     }
 

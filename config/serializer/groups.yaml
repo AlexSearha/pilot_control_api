@@ -30,10 +30,12 @@ App\Entity\User:
 
 App\Entity\Company:
     attributes:
+        id:
+            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project','get:light_maintenance']
         uuid:
-            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project']
+            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project','get:light_maintenance']
         name:
-            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project']
+            groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project', 'get:light_maintenance']
         email:
             groups: ['get:light_company', 'get:full_company', 'get:auth_me', 'get:light_project']
         address:
@@ -174,7 +176,7 @@ App\Entity\Item:
         uuid:
             groups: ['get:light_items']
         company:
-            groups: ['get:light_items']
+            groups: ['get:light_items', 'get:light_maintenance']
         supplier:
             groups: ['get:light_items']
         status:
@@ -215,3 +217,12 @@ App\Entity\Item:
             groups: ['get:full_items']
         slug:
             groups: ['get:full_items']
+
+App\Entity\Maintenance:
+    attributes:
+        id:
+            groups: ['get:light_maintenance']
+        uuid:
+            groups: ['get:light_maintenance']
+        item:
+            groups: ['get:light_maintenance']
