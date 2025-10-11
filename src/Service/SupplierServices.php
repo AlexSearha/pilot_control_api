@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SupplierServices
 {
-
     private $errorToStringify = [];
 
     public function __construct(
@@ -20,21 +19,22 @@ class SupplierServices
         private CompanyService $companyService,
         private ValidatorInterface $validator,
         private EntityManagerInterface $em
-    ) {}
+    ) {
+    }
 
     public function getAllSuppliers(): array
     {
         return $this->supplierRepo->findBy([], ['name' => 'ASC']);
     }
 
-    public function getClientSuppliers(?Company $company) : array
+    public function getClientSuppliers(?Company $company): array
     {
         $this->companyService->isCompanyExist($company);
 
         return $this->supplierRepo->findBy(['company' => $company->getId() ]);
     }
 
-    public function getOneSupplier(?Company $company, ?Supplier $supplier) : Supplier
+    public function getOneSupplier(?Company $company, ?Supplier $supplier): Supplier
     {
         $this->companyService->isCompanyExist($company);
         $this->isSupplierExist($supplier);
@@ -42,11 +42,11 @@ class SupplierServices
         return $supplier;
     }
 
-    public function createSupplier(?Company $company, array $payload) : Supplier
+    public function createSupplier(?Company $company, array $payload): Supplier
     {
         $this->companyService->isCompanyExist($company);
 
-        if (count($payload) === 0 ) {
+        if (count($payload) === 0) {
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
@@ -59,37 +59,37 @@ class SupplierServices
         $newSupplier->setCompany($company);
 
         if (isset($payload['email'])) {
-         $newSupplier->setEmail($payload['email']);
+            $newSupplier->setEmail($payload['email']);
         }
         if (isset($payload['address'])) {
-         $newSupplier->setAddress($payload['address']);
+            $newSupplier->setAddress($payload['address']);
         }
         if (isset($payload['zipcode'])) {
-         $newSupplier->setZipcode($payload['zipcode']);
+            $newSupplier->setZipcode($payload['zipcode']);
         }
         if (isset($payload['city'])) {
-         $newSupplier->setCity($payload['city']);
+            $newSupplier->setCity($payload['city']);
         }
         if (isset($payload['siret'])) {
-         $newSupplier->setSiret($payload['addsiretress']);
+            $newSupplier->setSiret($payload['addsiretress']);
         }
         if (isset($payload['siren'])) {
-         $newSupplier->setSiren($payload['siren']);
+            $newSupplier->setSiren($payload['siren']);
         }
         if (isset($payload['region'])) {
-         $newSupplier->setRegion($payload['region']);
+            $newSupplier->setRegion($payload['region']);
         }
         if (isset($payload['vatNumber'])) {
-         $newSupplier->setVatNumber($payload['vatNumber']);
+            $newSupplier->setVatNumber($payload['vatNumber']);
         }
         if (isset($payload['activityType'])) {
-         $newSupplier->setActivityType($payload['activityType']);
+            $newSupplier->setActivityType($payload['activityType']);
         }
         if (isset($payload['website'])) {
-         $newSupplier->setWebsite($payload['website']);
+            $newSupplier->setWebsite($payload['website']);
         }
         if (isset($payload['comments'])) {
-         $newSupplier->setComments($payload['comments']);
+            $newSupplier->setComments($payload['comments']);
         }
 
         $errors = $this->validator->validate($newSupplier);
@@ -110,53 +110,53 @@ class SupplierServices
 
             return $newSupplier;
         } catch (\Exception $e) {
-         throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+            throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
 
         }
 
     }
 
-    public function updateOneSupplier(?Company $company, ?Supplier $supplier, array $payload) : Supplier
+    public function updateOneSupplier(?Company $company, ?Supplier $supplier, array $payload): Supplier
     {
         $this->companyService->isCompanyExist($company);
         $this->isSupplierExist($supplier);
 
-        if (count($payload) === 0 ) {
+        if (count($payload) === 0) {
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
         if (isset($payload['email'])) {
-         $supplier->setEmail($payload['email']);
+            $supplier->setEmail($payload['email']);
         }
         if (isset($payload['address'])) {
-         $supplier->setAddress($payload['address']);
+            $supplier->setAddress($payload['address']);
         }
         if (isset($payload['zipcode'])) {
-         $supplier->setZipcode($payload['zipcode']);
+            $supplier->setZipcode($payload['zipcode']);
         }
         if (isset($payload['city'])) {
-         $supplier->setCity($payload['city']);
+            $supplier->setCity($payload['city']);
         }
         if (isset($payload['siret'])) {
-         $supplier->setSiret($payload['addsiretress']);
+            $supplier->setSiret($payload['addsiretress']);
         }
         if (isset($payload['siren'])) {
-         $supplier->setSiren($payload['siren']);
+            $supplier->setSiren($payload['siren']);
         }
         if (isset($payload['region'])) {
-         $supplier->setRegion($payload['region']);
+            $supplier->setRegion($payload['region']);
         }
         if (isset($payload['vatNumber'])) {
-         $supplier->setVatNumber($payload['vatNumber']);
+            $supplier->setVatNumber($payload['vatNumber']);
         }
         if (isset($payload['activityType'])) {
-         $supplier->setActivityType($payload['activityType']);
+            $supplier->setActivityType($payload['activityType']);
         }
         if (isset($payload['website'])) {
-         $supplier->setWebsite($payload['website']);
+            $supplier->setWebsite($payload['website']);
         }
         if (isset($payload['comments'])) {
-         $supplier->setComments($payload['comments']);
+            $supplier->setComments($payload['comments']);
         }
 
         $errors = $this->validator->validate($supplier);
@@ -176,12 +176,12 @@ class SupplierServices
             return $supplier;
 
         } catch (\Exception $e) {
-         throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+            throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
 
         }
     }
 
-    public function deleteSupplier(?Company $company, ?Supplier $supplier) : void
+    public function deleteSupplier(?Company $company, ?Supplier $supplier): void
     {
         $this->companyService->isCompanyExist($company);
         $this->isSupplierExist($supplier);
@@ -192,12 +192,12 @@ class SupplierServices
             $this->em->flush();
 
         } catch (\Exception $e) {
-         throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+            throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
 
         }
     }
 
-    public function findOneSupplier(string $supplierUuid) : Supplier
+    public function findOneSupplier(string $supplierUuid): Supplier
     {
         $supplier = $this->supplierRepo->findOneBy(['uuid' => $supplierUuid]);
 

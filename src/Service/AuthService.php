@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Service;
 
 use App\Entity\User;
@@ -29,8 +28,8 @@ class AuthService extends AbstractController
         private LoggerInterface $logger,
         private UserService $userService,
         private CompanyService $companyService
-    )
-    {}
+    ) {
+    }
 
     /**
      * Registers a new user in the database.
@@ -47,7 +46,7 @@ class AuthService extends AbstractController
      *
      * @throws \Exception If an unexpected error occurs during persistence
      */
-    public function registerNewUser(array $payload, string|null $companyUuid) : User
+    public function registerNewUser(array $payload, string|null $companyUuid): User
     {
         $company = null;
 
@@ -78,7 +77,7 @@ class AuthService extends AbstractController
      *
      * @throws \Exception If an unexpected error occurs during database operations
      */
-    public function confirmEmail(string $token) : JsonResponse
+    public function confirmEmail(string $token): JsonResponse
     {
         try {
             $decodeToken = $this->tokenService->tokenParser($token);
@@ -203,7 +202,7 @@ class AuthService extends AbstractController
     {
         /** @var User $userSession */
         $userSession        = $this->getUser();
-        $oldPassword        = $payload['oldPassword']?? null;
+        $oldPassword        = $payload['oldPassword'] ?? null;
         $newPassword        = $payload['newPassword'] ?? null;
         $checkNewPassword   = $payload['checkNewPassword'] ?? null;
 
@@ -242,9 +241,11 @@ class AuthService extends AbstractController
      * @return JsonResponse Returns a success response with user data,
      *                      or an error response if the user is invalid
      */
-    public function getUserInformation(User $user) : JsonResponse
+    public function getUserInformation(User $user): JsonResponse
     {
-        if (!$user) return $this->formatService->sendErrorReponse("Une erreur s'est produite");
+        if (!$user) {
+            return $this->formatService->sendErrorReponse("Une erreur s'est produite");
+        }
 
         $serializeData = $this->serializer->serialize($user, 'json', ['groups' => 'get:auth_me']);
 

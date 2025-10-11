@@ -25,13 +25,13 @@ class UserService extends AbstractController
         private EntityManagerInterface $em,
         private CompanyRepository $companyRepo,
         private CompanyService $companyService
-    )
-    {}
+    ) {
+    }
 
     // ---- Admin Functions ----
     public function getAllUser()
     {
-        return $this->userRepo->findBy([],['email' => 'ASC']);
+        return $this->userRepo->findBy([], ['email' => 'ASC']);
     }
 
     public function getOneUser(string $userUuid): User
@@ -50,7 +50,7 @@ class UserService extends AbstractController
             throw new \Exception("Aucune données de reçues", Response::HTTP_NOT_FOUND);
         }
 
-        if (!isset($payload['email']) || !isset($payload['password']) ) {
+        if (!isset($payload['email']) || !isset($payload['password'])) {
             throw new \Exception("Email / Mot de passe / Société est manquant", Response::HTTP_BAD_REQUEST);
         }
 

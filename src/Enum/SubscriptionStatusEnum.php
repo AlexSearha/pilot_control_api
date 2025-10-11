@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Enum;
 
 enum SubscriptionStatusEnum: string

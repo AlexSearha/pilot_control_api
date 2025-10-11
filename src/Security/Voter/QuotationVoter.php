@@ -34,7 +34,7 @@ final class QuotationVoter extends Voter
             case self::EDIT:
             case self::CREATE:
             case self::DELETE:
-                 if (in_array('ROLE_MANAGER', $user->getRoles())) {
+                if (in_array('ROLE_MANAGER', $user->getRoles())) {
                     return $subject->getCompany()->getId() === $user->getCompany()->getId();
                 }
                 break;

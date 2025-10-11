@@ -19,14 +19,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class CompanyClientController extends AbstractController
 {
-
     public function __construct(
         private SerializerInterface $serializer,
         private CompanyClientService $companyClientService,
         private FormatService $format
-
-    )
-    {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -64,8 +62,7 @@ final class CompanyClientController extends AbstractController
     public function getCompanyClient(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $compagny,
         #[MapEntity(mapping: ['clientUuid' => 'uuid'])] CompanyClient $compagnyClient,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $companyClient = $this->companyClientService->getCompanyClient($compagny->getUuid(), $compagnyClient->getUuid());
             $serializeData = $this->serializer->serialize($companyClient, 'json', ['groups' => 'get:full_company']);
@@ -100,8 +97,7 @@ final class CompanyClientController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $compagny,
         #[MapEntity(mapping: ['clientUuid' => 'uuid'])] ?CompanyClient $compagnyClient,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -120,8 +116,7 @@ final class CompanyClientController extends AbstractController
     public function deleteCompanyClient(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $compagny,
         #[MapEntity(mapping: ['clientUuid' => 'uuid'])] ?CompanyClient $compagnyClient,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $this->companyClientService->deleteOneCompanyClient($compagny, $compagnyClient);
 

@@ -39,7 +39,7 @@ final class SupplierVoter extends Voter
                 break;
 
             case self::VIEW:
-                 if (in_array('ROLE_EMPLOYEE', $user->getRoles()) ||in_array('ROLE_MANAGER', $user->getRoles())) {
+                if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
                     return $user->getCompany()->getId() === $subject->getCompany()->getId();
                 }
                 break;

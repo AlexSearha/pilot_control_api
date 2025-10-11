@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MaintenanceService extends AbstractController
 {
-     private $errorsToStrigify = [];
+    private $errorsToStrigify = [];
 
     public function __construct(
         private CompanyService $companyService,
@@ -26,10 +26,10 @@ class MaintenanceService extends AbstractController
         private EntityManagerInterface $em,
         private MaintenanceRepository $maintenanceRepo,
         private UserService $userService
-    )
-    {}
+    ) {
+    }
 
-    public function getAllMaintenances() : array
+    public function getAllMaintenances(): array
     {
         return $this->maintenanceRepo->findBy([], ['startedAt' => "ASC"]);
     }
@@ -41,7 +41,7 @@ class MaintenanceService extends AbstractController
         return $this->maintenanceRepo->findMaintenanceByCompany($company);
     }
 
-    public function getAllItemClientMaitenances(?Company $company, ?Item $item) : array
+    public function getAllItemClientMaitenances(?Company $company, ?Item $item): array
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
@@ -49,7 +49,7 @@ class MaintenanceService extends AbstractController
         return $this->maintenanceRepo->findBy(['id' => $item->getId(), ['id' => 'ASC']]);
     }
 
-    public function getClientMaintenance(?Company $company, ?Item $item, ?Maintenance $maintenance) : Maintenance
+    public function getClientMaintenance(?Company $company, ?Item $item, ?Maintenance $maintenance): Maintenance
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
@@ -58,7 +58,7 @@ class MaintenanceService extends AbstractController
         return $maintenance;
     }
 
-    public function findMaintenanceByUuid(?Company $company, ?Item $item, string $maintenanceUuid) : Maintenance
+    public function findMaintenanceByUuid(?Company $company, ?Item $item, string $maintenanceUuid): Maintenance
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
@@ -69,13 +69,13 @@ class MaintenanceService extends AbstractController
         return $maintenance;
     }
 
-    public function createClientMaintenance(?Company $company,?Item $item, array $payload) : Maintenance
+    public function createClientMaintenance(?Company $company, ?Item $item, array $payload): Maintenance
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
 
         if (count($payload) === 0) {
-             throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
+            throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
         }
 
         $newMaintenance = new Maintenance();
@@ -122,7 +122,7 @@ class MaintenanceService extends AbstractController
             $newMaintenance->setCost($payload['cost']);
         }
 
-         $errors = $this->validator->validate($newMaintenance);
+        $errors = $this->validator->validate($newMaintenance);
 
         if (count($errors) > 0) {
 
@@ -145,17 +145,17 @@ class MaintenanceService extends AbstractController
 
     }
 
-    public function updateClientMaintenance(?Company $company,?Item $item, ?Maintenance $maintenance, array $payload) : Maintenance
+    public function updateClientMaintenance(?Company $company, ?Item $item, ?Maintenance $maintenance, array $payload): Maintenance
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
         $this->isMaintenanceExist($maintenance);
 
         if (count($payload) === 0) {
-             throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
+            throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
         }
 
-         if (isset($payload['maintenanceType'])) {
+        if (isset($payload['maintenanceType'])) {
             $maintenance->setMaintenanceType(MaintenanceTypeEnum::from($payload['maintenanceType']));
         }
 
@@ -217,7 +217,7 @@ class MaintenanceService extends AbstractController
         }
     }
 
-    public function deleteClientMaintenance(?Company $company,?Item $item, ?Maintenance $maintenance): void
+    public function deleteClientMaintenance(?Company $company, ?Item $item, ?Maintenance $maintenance): void
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
@@ -232,19 +232,19 @@ class MaintenanceService extends AbstractController
         }
     }
 
-    public function deleteClientMaintenances(?Company $company,?Item $item, array $payload): void
+    public function deleteClientMaintenances(?Company $company, ?Item $item, array $payload): void
     {
         $this->companyService->isCompanyExist($company);
         $this->itemService->isItemExist($item);
 
         foreach ($payload['maintenances'] as $maintenanceUuid) {
-            $maintenance = $this->findMaintenanceByUuid($company, $item ,$maintenanceUuid);
+            $maintenance = $this->findMaintenanceByUuid($company, $item, $maintenanceUuid);
             $this->denyAccessUnlessGranted(MaintenanceVoter::DELETE, $maintenance);
             $this->deleteClientMaintenance($company, $item, $maintenance);
         }
     }
 
-    public function isMaintenanceExist(?Maintenance $maintenance) : void
+    public function isMaintenanceExist(?Maintenance $maintenance): void
     {
         if (!$maintenance) {
             throw new \Exception("Fournisseur inconnu", Response::HTTP_FOUND);

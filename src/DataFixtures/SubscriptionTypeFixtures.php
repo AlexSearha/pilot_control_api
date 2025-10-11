@@ -8,12 +8,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class SubscriptionTypeFixtures extends Fixture
 {
-
     public function load(ObjectManager $manager): void
     {
 
         $subscriptionTypes = require __DIR__ . '/../../data/subscriptionTypesData.php';
-         if (count($subscriptionTypes) === 0) {
+        if (count($subscriptionTypes) === 0) {
             return;
         }
 

@@ -21,7 +21,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class SupplierOrderController extends AbstractController
 {
-
     public function __construct(
         private SerializerInterface $serializer,
         private FormatService $format,
@@ -47,9 +46,7 @@ final class SupplierOrderController extends AbstractController
     public function getAllClientSupplierOrders(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier
-
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $suppliers = $this->supplierOrderService->getAllClientSupplierOrders($company, $supplier);
             $serializeData = $this->serializer->serialize($suppliers, 'json', ['groups' => 'get:light:supplier-order']);
@@ -67,8 +64,7 @@ final class SupplierOrderController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
         #[MapEntity(mapping: ['orderUuid' => 'uuid'])] SupplierOrder $supplierOrder
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $suppliers = $this->supplierOrderService->getClientSupplierOrder($company, $supplier, $supplierOrder);
             $serializeData = $this->serializer->serialize($suppliers, 'json', ['groups' => 'get:light:supplier-order']);
@@ -86,8 +82,7 @@ final class SupplierOrderController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
         Request $request
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -107,8 +102,7 @@ final class SupplierOrderController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
         #[MapEntity(mapping: ['orderUuid' => 'uuid'])] SupplierOrder $supplierOrder
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $this->supplierOrderService->deleteClientSupplierOrder($company, $supplier, $supplierOrder);
             return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
@@ -125,8 +119,7 @@ final class SupplierOrderController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['supplierUuid' => 'uuid'])] Supplier $supplier,
         Request $request
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {

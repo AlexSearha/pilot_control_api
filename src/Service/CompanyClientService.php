@@ -13,10 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-
 class CompanyClientService extends AbstractController
 {
-
     private $errorToStringify = [];
 
 
@@ -25,8 +23,8 @@ class CompanyClientService extends AbstractController
         private CompanyClientRepository $companyClientRepo,
         private ValidatorInterface $validator,
         private CompanyService $companyService,
-    )
-    {}
+    ) {
+    }
 
 
     public function getCompaniesClients(): array
@@ -51,7 +49,7 @@ class CompanyClientService extends AbstractController
 
     }
 
-    public function findCompanyClientByUuid(string $companyClientUuid) : CompanyClient
+    public function findCompanyClientByUuid(string $companyClientUuid): CompanyClient
     {
         $compagnyClient = $this->companyClientRepo->findOneBy(['uuid' => $companyClientUuid]);
 
@@ -198,7 +196,7 @@ class CompanyClientService extends AbstractController
             $companyClient->setCompany($company);
         }
 
-         $errors = $this->validator->validate($companyClient);
+        $errors = $this->validator->validate($companyClient);
 
         if (count($errors) > 0) {
 
@@ -252,11 +250,11 @@ class CompanyClientService extends AbstractController
         $this->companyService->isCompanyExist($company);
 
         foreach ($payload['companyClientsUuids'] as $companyClientUuid) {
-           $companyClient = $this->getClientByUuid($companyClientUuid);
+            $companyClient = $this->getClientByUuid($companyClientUuid);
 
-           $this->denyAccessUnlessGranted(CompanyClientVoter::DELETE, $companyClient,  "ACCES REFUSE, vous n'avez pas les droits pour effectuer effectuer cette action");
+            $this->denyAccessUnlessGranted(CompanyClientVoter::DELETE, $companyClient, "ACCES REFUSE, vous n'avez pas les droits pour effectuer effectuer cette action");
 
-           $companyClient->setDeletedAt(new DateTimeImmutable());
+            $companyClient->setDeletedAt(new DateTimeImmutable());
 
         }
 
@@ -267,7 +265,7 @@ class CompanyClientService extends AbstractController
         }
     }
 
-    public function getClientByUuid(string $companyClientUuid) : CompanyClient
+    public function getClientByUuid(string $companyClientUuid): CompanyClient
     {
         $client = $this->companyClientRepo->findOneBy(['uuid' => $companyClientUuid]);
         if (!$client) {

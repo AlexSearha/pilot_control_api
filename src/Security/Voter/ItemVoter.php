@@ -39,9 +39,9 @@ final class ItemVoter extends Voter
                 break;
 
             case self::VIEW:
-              if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
-                return $subject->getCompany()->getId() === $user->getCompany()->getId();
-              }
+                if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
+                    return $subject->getCompany()->getId() === $user->getCompany()->getId();
+                }
 
                 break;
         }

@@ -17,13 +17,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class CompanyController extends AbstractController
 {
-
     public function __construct(
         private CompanyService $companyService,
         private SerializerInterface $serializer,
         private FormatService $format
-    )
-    {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -41,7 +40,7 @@ final class CompanyController extends AbstractController
 
     #[Route('/api/company', name: 'app_create_company', methods:['POST'])]
     #[IsGranted('ROLE_SUPER_ADMIN')]
-    public function createCompanies(Request $request) :JsonResponse
+    public function createCompanies(Request $request): JsonResponse
     {
         $payload = $request->getPayload()->all();
 
@@ -58,7 +57,7 @@ final class CompanyController extends AbstractController
 
     #[Route('/api/company/{companyUuid}', name: 'app_delete_company', methods:['DELETE'])]
     #[IsGranted('ROLE_SUPER_ADMIN')]
-    public function deleteCompany(string $companyUuid) :JsonResponse
+    public function deleteCompany(string $companyUuid): JsonResponse
     {
         try {
             $this->companyService->deleteCompany($companyUuid);
@@ -74,7 +73,7 @@ final class CompanyController extends AbstractController
 
     #[Route('/api/company/{companyUuid}', name: 'app_get_one_company', methods:['GET'])]
     #[IsGranted(CompanyVoter::VIEW, 'company')]
-    public function getOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company) : JsonResponse
+    public function getOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company): JsonResponse
     {
         $allCompanies = $this->companyService->getOneCompany($company->getUuid());
 
@@ -86,7 +85,7 @@ final class CompanyController extends AbstractController
 
     #[Route('/api/company/{companyUuid}', name: 'app_update_one_company', methods:['PATCH'])]
     #[IsGranted(CompanyVoter::EDIT, 'company')]
-    public function updateOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company, Request $request) : JsonResponse
+    public function updateOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company, Request $request): JsonResponse
     {
 
         $payload = $request->getPayload()->all();

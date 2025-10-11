@@ -36,9 +36,11 @@ final class CompanyClientVoter extends Voter
 
 
             case self::VIEW:
-                if (in_array('ROLE_MANAGER' , $user->getRoles()) || in_array('ROLE_EMPLOYEE' , $user->getRoles())) {
+                if (in_array('ROLE_MANAGER', $user->getRoles()) || in_array('ROLE_EMPLOYEE', $user->getRoles())) {
 
-                    if ($user->getCompany() === null) return false;
+                    if ($user->getCompany() === null) {
+                        return false;
+                    }
 
                     return $user->getCompany()->getId() === $subject->getId();
                 }
@@ -47,9 +49,11 @@ final class CompanyClientVoter extends Voter
             case self::EDIT:
             case self::CREATE:
             case self::DELETE:
-                if (in_array('ROLE_MANAGER' , $user->getRoles())) {
+                if (in_array('ROLE_MANAGER', $user->getRoles())) {
 
-                    if ($user->getCompany() === null) return false;
+                    if ($user->getCompany() === null) {
+                        return false;
+                    }
 
                     return $user->getCompany()->getId() === $subject->getCompany()->getId();
                 }

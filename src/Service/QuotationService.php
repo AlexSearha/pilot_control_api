@@ -25,19 +25,20 @@ class QuotationService extends AbstractController
         private ValidatorInterface $validator,
         private EntityManagerInterface $em,
         private QuotationItemService $quotationItemService
-    ) {}
+    ) {
+    }
 
     public function getAllQuotations()
     {
         return $this->quotationRepo->findBy([], ['title' => 'ASC']);
     }
 
-    public function getClientQuotations(?Company $company) : array
+    public function getClientQuotations(?Company $company): array
     {
         return $this->quotationRepo->findBy(['company' => $company->getId()], ['createAt' => 'ASC']);
     }
 
-    public function findQuotationByUuid(string $quotationUuuid) : Quotation
+    public function findQuotationByUuid(string $quotationUuuid): Quotation
     {
         $quotation =  $this->quotationRepo->findOneBy(['uuid' => $quotationUuuid]);
 
@@ -46,7 +47,7 @@ class QuotationService extends AbstractController
         return $quotation;
     }
 
-    public function getOneClientQuotation(?Company $company, ?Quotation $quotation) : object
+    public function getOneClientQuotation(?Company $company, ?Quotation $quotation): object
     {
         $this->companyService->isCompanyExist($company);
         $this->isQuotationExist($quotation);
@@ -58,7 +59,7 @@ class QuotationService extends AbstractController
     {
         $this->companyService->isCompanyExist($company);
 
-        if (count($payload) === 0 ) {
+        if (count($payload) === 0) {
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
@@ -141,7 +142,7 @@ class QuotationService extends AbstractController
         }
     }
 
-    public function updateClientQuotation(?Company $company, ?Quotation $quotation, array $payload) : Quotation
+    public function updateClientQuotation(?Company $company, ?Quotation $quotation, array $payload): Quotation
     {
         $this->companyService->isCompanyExist($company);
         $this->isQuotationExist($quotation);
@@ -158,7 +159,7 @@ class QuotationService extends AbstractController
             }
         }
 
-         if (isset($payload['quotationItemsRemove'])) {
+        if (isset($payload['quotationItemsRemove'])) {
             foreach ($payload['quotationItemsRemove'] as $quotationItemUuid) {
 
                 $quotationItem = $this->quotationItemService->findClientQuotationItemByUuid($quotationItemUuid);
@@ -193,7 +194,7 @@ class QuotationService extends AbstractController
         }
         if (isset($payload['project'])) {
             $project = $this->projectService->getOneClientProject($payload['project']);
-            $quotation->setComments($project);
+            $quotation->setProject($project);
         }
         if (isset($payload['currency'])) {
             $currency = null; // TODO: A renseigner des que Currency est OK
@@ -233,14 +234,14 @@ class QuotationService extends AbstractController
 
     }
 
-    public function deleteClientQuotation(?Company $company, ?Quotation $quotation) : void
+    public function deleteClientQuotation(?Company $company, ?Quotation $quotation): void
     {
         $this->companyService->isCompanyExist($company);
         $this->isQuotationExist($quotation);
 
         $quotation->setDeletedAt(new DateTimeImmutable());
 
-         try {
+        try {
             $this->em->flush();
 
         } catch (\Exception $e) {
@@ -267,7 +268,7 @@ class QuotationService extends AbstractController
         }
     }
 
-    public function isQuotationExist(?Quotation $quotation) : Quotation
+    public function isQuotationExist(?Quotation $quotation): Quotation
     {
         if (!$quotation) {
             throw new \Exception("Article inconnu", Response::HTTP_NOT_FOUND);

@@ -13,15 +13,14 @@ use Cocur\Slugify\Slugify;
 
 class CompanyService extends AbstractController
 {
-
     private $errorsToStrigify = [];
 
     public function __construct(
         private EntityManagerInterface $em,
         private CompanyRepository $companyRepo,
         private ValidatorInterface $validator
-    )
-    {}
+    ) {
+    }
 
     public function getAllCompanies()
     {
@@ -99,7 +98,7 @@ class CompanyService extends AbstractController
                 $this->errorsToStrigify[] = $error->getMessage();
             }
 
-            throw new \Exception(implode(',', $this->errorsToStrigify),Response::HTTP_BAD_REQUEST);
+            throw new \Exception(implode(',', $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
 
         }
 
@@ -142,16 +141,16 @@ class CompanyService extends AbstractController
         }
         if (isset($payload['email'])) {
 
-            if (!in_array('ROLE_SUPER_ADMIN',$this->getUser()->getRoles())) {
+            if (!in_array('ROLE_SUPER_ADMIN', $this->getUser()->getRoles())) {
                 throw new \Exception("Vous n'avez pas les droits pour modifier l'adresse email", Response::HTTP_UNAUTHORIZED);
 
             }
 
             $company->setEmail($payload['email']);
         }
-         if (isset($payload['domaineSlug'])) {
+        if (isset($payload['domaineSlug'])) {
 
-            if (!in_array('ROLE_SUPER_ADMIN',$this->getUser()->getRoles())) {
+            if (!in_array('ROLE_SUPER_ADMIN', $this->getUser()->getRoles())) {
                 throw new \Exception("Vous n'avez pas les droits pour modifier le nom de domaine", Response::HTTP_UNAUTHORIZED);
 
             }
@@ -202,7 +201,7 @@ class CompanyService extends AbstractController
                 $this->errorsToStrigify[] = $error->getMessage();
             }
 
-            throw new \Exception(implode(',', $this->errorsToStrigify),Response::HTTP_BAD_REQUEST);
+            throw new \Exception(implode(',', $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
 
         }
 

@@ -25,21 +25,22 @@ class InvoiceService extends AbstractController
         private QuotationService $quotationService,
         private CompanyClientService $companyClientService,
         private ProjectService $projectService
-    ) {}
+    ) {
+    }
 
     public function getAllInvoices()
     {
         return $this->invoiceRepo->findBy([], ['invoiceNumber' => 'ASC']);
     }
 
-    public function getAllClientInvoices(?Company $company) : array
+    public function getAllClientInvoices(?Company $company): array
     {
         $this->companyService->isCompanyExist($company);
 
         return $this->invoiceRepo->findBy(['company' => $company->getId(), ['createdAt' => 'ASC']]);
     }
 
-    public function getOneClientInvoice(?Company $company, ?Invoice $invoice) : Invoice
+    public function getOneClientInvoice(?Company $company, ?Invoice $invoice): Invoice
     {
         $this->companyService->isCompanyExist($company);
         $this->isInvoiceExist($invoice);
@@ -47,7 +48,7 @@ class InvoiceService extends AbstractController
         return $invoice;
     }
 
-    public function findClientInvoice(string $invoiceUuid) : Invoice
+    public function findClientInvoice(string $invoiceUuid): Invoice
     {
         $invoice = $this->invoiceRepo->findOneBy(['uuid' => $invoiceUuid]);
 
@@ -60,7 +61,7 @@ class InvoiceService extends AbstractController
     {
         $this->companyService->isCompanyExist($company);
 
-        if (count($payload) === 0 ) {
+        if (count($payload) === 0) {
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
@@ -292,7 +293,7 @@ class InvoiceService extends AbstractController
         }
     }
 
-    public function deleteClientInvoice(?Company $company, ?Invoice $invoice) : void
+    public function deleteClientInvoice(?Company $company, ?Invoice $invoice): void
     {
         $this->companyService->isCompanyExist($company);
         $this->isInvoiceExist($invoice);
@@ -305,7 +306,7 @@ class InvoiceService extends AbstractController
         }
     }
 
-    public function deleteClientInvoices(?Company $company, array $payload) : void
+    public function deleteClientInvoices(?Company $company, array $payload): void
     {
 
         if (count($payload['invoices']) === 0) {
@@ -321,7 +322,7 @@ class InvoiceService extends AbstractController
 
     }
 
-    public function isInvoiceExist(?Invoice $invoice) : void
+    public function isInvoiceExist(?Invoice $invoice): void
     {
         if (!$invoice) {
             throw new \Exception("Article inconnu", Response::HTTP_NOT_FOUND);

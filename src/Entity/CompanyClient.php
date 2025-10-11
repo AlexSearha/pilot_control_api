@@ -29,7 +29,7 @@ class CompanyClient
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.", )]
     #[Assert\NotBlank(message:"Un email de contact est obligatoire")]
     private ?string $email = null;
 
@@ -92,7 +92,7 @@ class CompanyClient
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
@@ -111,7 +111,7 @@ class CompanyClient
      * Pre update variables
      */
     #[ORM\PreUpdate]
-    public function setPreUpdate() : void
+    public function setPreUpdate(): void
     {
         $this->updatedAt = new DateTimeImmutable();
     }

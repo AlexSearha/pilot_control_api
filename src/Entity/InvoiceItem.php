@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ORM\Entity(repositoryClass: InvoiceItemRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class InvoiceItem
@@ -51,9 +50,9 @@ class InvoiceItem
     private ?\DateTimeImmutable $updatedAt = null;
 
 
-     /**
-     * Pre persist variables
-     */
+    /**
+    * Pre persist variables
+    */
     #[ORM\PrePersist]
     public function setPrePersist(): void
     {
@@ -61,7 +60,7 @@ class InvoiceItem
             $this->uuid = Uuid::v4();
         }
 
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;

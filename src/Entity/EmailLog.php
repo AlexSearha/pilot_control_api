@@ -25,15 +25,15 @@ class EmailLog
     private ?SmtpConfiguration $smtpConfiguration = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.", )]
     private ?string $toEmail = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
-    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.", )]
     private ?string $ccEmail = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
-    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.", )]
     private ?string $bccEmail = null;
 
     #[ORM\Column(length: 255)]
@@ -66,9 +66,9 @@ class EmailLog
     #[ORM\ManyToOne(inversedBy: 'emailLogs')]
     private ?Company $company = null;
 
-     /**
-     * Pre persist variables
-     */
+    /**
+    * Pre persist variables
+    */
     #[ORM\PrePersist]
     public function setPrePersist(): void
     {
@@ -76,7 +76,7 @@ class EmailLog
             $this->uuid = Uuid::v4();
         }
 
-        if($this->createdAt === null) {
+        if ($this->createdAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
         }

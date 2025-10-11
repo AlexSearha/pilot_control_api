@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum TwoFactorStatusEnum : string
+enum TwoFactorStatusEnum: string
 {
     case PENDING    = 'PENDING';
     case VERIFIED   = 'VERIFIED';

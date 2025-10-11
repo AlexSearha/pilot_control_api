@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class SupplierController extends AbstractController
 {
-
     public function __construct(
         private SupplierServices $supplierServices,
         private SerializerInterface $serializer,

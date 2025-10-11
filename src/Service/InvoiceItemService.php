@@ -20,22 +20,23 @@ class InvoiceItemService extends AbstractController
         private ItemService $itemService,
         private ValidatorInterface $validator,
         private EntityManagerInterface $em,
-    ) {}
+    ) {
+    }
 
-    public function getAllInvoiceItems() : array
+    public function getAllInvoiceItems(): array
     {
         return $this->invoiceItemRepo->findBy([], ['createdAt' => 'ASC']);
 
     }
 
-    public function getAllClientInvoiceItems(?Item $item) : array
+    public function getAllClientInvoiceItems(?Item $item): array
     {
         $this->itemService->isItemExist($item);
 
         return $this->invoiceItemRepo->findBy(['item' => $item->getId(), ["createdAt" => "ASC"] ]);
     }
 
-    public function findClientInvoiceItemByUuid(string $invoiceItemUuid) : InvoiceItem
+    public function findClientInvoiceItemByUuid(string $invoiceItemUuid): InvoiceItem
     {
         $invoiceItem = $this->invoiceItemRepo->findOneBy(['uuid' => $invoiceItemUuid]);
         $this->isInvoiceItemExist($invoiceItem);
@@ -43,7 +44,7 @@ class InvoiceItemService extends AbstractController
         return $invoiceItem;
     }
 
-    public function createInvoiceItem(?Invoice $invoice, array $payload) : InvoiceItem
+    public function createInvoiceItem(?Invoice $invoice, array $payload): InvoiceItem
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_NOT_FOUND);
@@ -99,7 +100,7 @@ class InvoiceItemService extends AbstractController
 
     }
 
-    public function updateQuotationItem(?InvoiceItem $invoiceItem, array $payload) : InvoiceItem
+    public function updateQuotationItem(?InvoiceItem $invoiceItem, array $payload): InvoiceItem
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_NOT_FOUND);
@@ -142,11 +143,11 @@ class InvoiceItemService extends AbstractController
         }
     }
 
-    public function deleteInvoiceItem(?InvoiceItem $invoiceItem) : void
+    public function deleteInvoiceItem(?InvoiceItem $invoiceItem): void
     {
         $this->isInvoiceItemExist($invoiceItem);
 
-         try {
+        try {
             $this->em->remove($invoiceItem);
             $this->em->flush();
 
@@ -157,13 +158,13 @@ class InvoiceItemService extends AbstractController
 
     }
 
-    public function deleteInvoiceItemByUuid(string $invoiceItemUuid) : void
+    public function deleteInvoiceItemByUuid(string $invoiceItemUuid): void
     {
         $invoiceitem = $this->findClientInvoiceItemByUuid($invoiceItemUuid);
         $this->deleteInvoiceItem($invoiceitem);
     }
 
-    public function deleteInvoiceItems(array $payload) : void
+    public function deleteInvoiceItems(array $payload): void
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
@@ -175,7 +176,7 @@ class InvoiceItemService extends AbstractController
         }
     }
 
-    public function isInvoiceItemExist(?InvoiceItem $invoiceItem) : InvoiceItem
+    public function isInvoiceItemExist(?InvoiceItem $invoiceItem): InvoiceItem
     {
         if (!$invoiceItem) {
             throw new \Exception("l'article de la facture est inconnu", Response::HTTP_NOT_FOUND);

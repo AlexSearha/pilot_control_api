@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Service;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -8,7 +7,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class FormatService extends AbstractController
 {
-
     public function sendSuccessReponse(mixed $data = null, int $code = 200, bool $compressed = false, array $cookies = []): JsonResponse
     {
         $data = [
@@ -27,7 +25,7 @@ class FormatService extends AbstractController
         return $response;
     }
 
-    public function sendSuccessSerializeResponse(string $data, int $code = 200, $compressed = false, array $cookies = []) : JsonResponse
+    public function sendSuccessSerializeResponse(string $data, int $code = 200, $compressed = false, array $cookies = []): JsonResponse
     {
         $decodeData = json_decode($data, true);
 

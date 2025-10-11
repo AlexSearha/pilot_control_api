@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Service;
 
 use App\Entity\User;
@@ -11,10 +9,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TokenService extends AbstractController
 {
-
     public function __construct(
         private JWTTokenManagerInterface $jWTTokenManager
-    ){}
+    ) {
+    }
 
     /**
      * Generates a JWT token for a specific user and purpose.
@@ -65,11 +63,15 @@ class TokenService extends AbstractController
     {
         $decodeToken = $this->tokenParser($token);
 
-        if(!is_array($decodeToken)) return false;
+        if (!is_array($decodeToken)) {
+            return false;
+        }
 
         $now = (new DateTimeImmutable())->getTimestamp();
 
-        if ($now > $decodeToken['exp']) return false;
+        if ($now > $decodeToken['exp']) {
+            return false;
+        }
 
         return true;
     }

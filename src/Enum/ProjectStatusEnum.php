@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum ProjectStatusEnum : string
+enum ProjectStatusEnum: string
 {
     case PLANNED        = 'plannifié';
     case IN_PROGRESS    = 'en cours';

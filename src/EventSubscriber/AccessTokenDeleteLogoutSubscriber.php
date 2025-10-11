@@ -10,7 +10,7 @@ class AccessTokenDeleteLogoutSubscriber implements EventSubscriberInterface
 {
     public function onLogoutEvent(LogoutEvent $event): void
     {
-         $response = $event->getResponse();
+        $response = $event->getResponse();
 
         if (!$response) {
             $response = new Response();

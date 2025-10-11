@@ -20,12 +20,12 @@ class ItemService
         private ValidatorInterface $validator,
         private SupplierServices $supplierServices,
         private EntityManagerInterface $em
-    )
-    {}
+    ) {
+    }
 
     public function getAllItems()
     {
-        return $this->itemRepo->findBy([],['name' => "ASC"]);
+        return $this->itemRepo->findBy([], ['name' => "ASC"]);
     }
 
     public function getClientAllItems(?Company $company): array
@@ -48,58 +48,58 @@ class ItemService
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
-       $this->companyService->isCompanyExist($company);
+        $this->companyService->isCompanyExist($company);
 
-       $newItem = new Item();
+        $newItem = new Item();
 
-       $newItem->setCompany($company);
+        $newItem->setCompany($company);
 
-       if (isset($payload['supplier'])) {
+        if (isset($payload['supplier'])) {
             $supplier = $this->supplierServices->findOneSupplier($payload['supplier']);
             $newItem->setSupplier($supplier);
-       }
-       if (isset($payload['name'])) {
+        }
+        if (isset($payload['name'])) {
             $newItem->setName($payload['name']);
-       }
-       if (isset($payload['status'])) {
+        }
+        if (isset($payload['status'])) {
             $newItem->setStatus($payload['status']);
-       }
-       if (isset($payload['description'])) {
+        }
+        if (isset($payload['description'])) {
             $newItem->setDescription($payload['description']);
-       }
-       if (isset($payload['quantity'])) {
+        }
+        if (isset($payload['quantity'])) {
             $newItem->setQuantity($payload['quantity']);
-       }
-       if (isset($payload['quatityReserved'])) {
+        }
+        if (isset($payload['quatityReserved'])) {
             $newItem->setQuatityReserved($payload['quatityReserved']);
-       }
-       if (isset($payload['quantityAlertThreshold'])) {
+        }
+        if (isset($payload['quantityAlertThreshold'])) {
             $newItem->setQuantityAlertThreshold($payload['quantityAlertThreshold']);
-       }
-       if (isset($payload['serialNumber'])) {
+        }
+        if (isset($payload['serialNumber'])) {
             $newItem->setSerialNumber($payload['serialNumber']);
-       }
-       if (isset($payload['unit'])) {
+        }
+        if (isset($payload['unit'])) {
             $newItem->setUnit($payload['unit']);
-       }
-       if (isset($payload['price'])) {
+        }
+        if (isset($payload['price'])) {
             $newItem->setPrice($payload['price']);
-       }
+        }
 
-       //  TODO: setter le currency quand il sera mis en place
+        //  TODO: setter le currency quand il sera mis en place
 
 
-       $errors = $this->validator->validate($newItem);
+        $errors = $this->validator->validate($newItem);
 
-         if (count($errors) > 0) {
+        if (count($errors) > 0) {
             foreach ($errors as $error) {
                 $this->errorsToStrigify[] = $error->getMessage();
             }
 
             throw new \Exception(implode(",", $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
-         }
+        }
 
-         try {
+        try {
             $this->em->persist($newItem);
             $this->em->flush();
             $this->em->refresh($newItem);
@@ -111,7 +111,7 @@ class ItemService
         }
     }
 
-    public function updateClientItem(?Company $company, ?Item $item, array $payload) : Item
+    public function updateClientItem(?Company $company, ?Item $item, array $payload): Item
     {
         if (count($payload) === 0) {
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
@@ -125,43 +125,43 @@ class ItemService
             $item->setSupplier($supplier);
         }
         if (isset($payload['name'])) {
-                $item->setName($payload['name']);
+            $item->setName($payload['name']);
         }
         if (isset($payload['status'])) {
-                $item->setStatus($payload['status']);
+            $item->setStatus($payload['status']);
         }
         if (isset($payload['description'])) {
-                $item->setDescription($payload['description']);
+            $item->setDescription($payload['description']);
         }
         if (isset($payload['quantity'])) {
-                $item->setQuantity($payload['quantity']);
+            $item->setQuantity($payload['quantity']);
         }
         if (isset($payload['quatityReserved'])) {
-                $item->setQuatityReserved($payload['quatityReserved']);
+            $item->setQuatityReserved($payload['quatityReserved']);
         }
         if (isset($payload['quantityAlertThreshold'])) {
-                $item->setQuantityAlertThreshold($payload['quantityAlertThreshold']);
+            $item->setQuantityAlertThreshold($payload['quantityAlertThreshold']);
         }
         if (isset($payload['serialNumber'])) {
-                $item->setSerialNumber($payload['serialNumber']);
+            $item->setSerialNumber($payload['serialNumber']);
         }
         if (isset($payload['unit'])) {
-                $item->setUnit($payload['unit']);
+            $item->setUnit($payload['unit']);
         }
         if (isset($payload['price'])) {
-                $item->setPrice($payload['price']);
+            $item->setPrice($payload['price']);
         }
 
 
-       $errors = $this->validator->validate($item);
+        $errors = $this->validator->validate($item);
 
-         if (count($errors) > 0) {
+        if (count($errors) > 0) {
             foreach ($errors as $error) {
                 $this->errorsToStrigify[] = $error->getMessage();
             }
 
             throw new \Exception(implode(",", $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
-         }
+        }
 
         try {
             $this->em->flush();
@@ -173,7 +173,7 @@ class ItemService
         }
     }
 
-    public function deleteItem(?Company $company, ?Item $item) :void
+    public function deleteItem(?Company $company, ?Item $item): void
     {
         $this->companyService->isCompanyExist($company);
         $this->isItemExist($item);
@@ -188,7 +188,7 @@ class ItemService
         }
     }
 
-    public function deleteItems(?Company $company, array $payload) :void
+    public function deleteItems(?Company $company, array $payload): void
     {
         $this->companyService->isCompanyExist($company);
 

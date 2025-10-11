@@ -27,7 +27,7 @@ class Company
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message:"Un email de contact est obligatoire")]
-    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.", )]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -91,13 +91,13 @@ class Company
             $this->active = true;
         }
 
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
         }
 
-        if($this->domaineSlug === null) {
+        if ($this->domaineSlug === null) {
             $slugify = new Slugify();
             $this->domaineSlug = $slugify->slugify($this->getName());
         }

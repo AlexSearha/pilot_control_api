@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum PaymentMethodEnum : string
+enum PaymentMethodEnum: string
 {
     case CASH           = 'espece';
     case CARD           = 'carte bancaire';

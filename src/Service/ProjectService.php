@@ -23,8 +23,8 @@ class ProjectService extends AbstractController
         private EntityManagerInterface $em,
         private UserService $userService,
         private ValidatorInterface $validator
-    )
-    {}
+    ) {
+    }
 
     public function getAllProjects(): array
     {
@@ -43,7 +43,7 @@ class ProjectService extends AbstractController
         return $this->projectRepo->findOneBy(['uuid' => $project->getUuid()]);
     }
 
-    public function findProjectByUuid(string $projectUuid) : Project
+    public function findProjectByUuid(string $projectUuid): Project
     {
         $project = $this->projectRepo->findOneBy(['uuid' => $projectUuid]);
 
@@ -106,15 +106,15 @@ class ProjectService extends AbstractController
         // TODO: ajouter les quotations une fois qu'elles seront créées
         // TODO: ajouter les invoices une fois qu'elles seront créées
 
-         $errors = $this->validator->validate($newProject);
+        $errors = $this->validator->validate($newProject);
 
-         if (count($errors) > 0) {
+        if (count($errors) > 0) {
             foreach ($errors as $error) {
                 $this->errorsToStrigify[] = $error->getMessage();
             }
 
             throw new \Exception(implode(",", $this->errorsToStrigify), Response::HTTP_BAD_REQUEST);
-         }
+        }
 
         try {
             $this->em->persist($newProject);
@@ -219,14 +219,14 @@ class ProjectService extends AbstractController
 
         $project->setDeletedAt(new DateTimeImmutable());
 
-         try {
+        try {
             $this->em->flush();
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), $e->getCode());
         }
     }
 
-    public function isPojectExist(Project $project) :Project
+    public function isPojectExist(Project $project): Project
     {
         if (!$project) {
             throw new \Exception("Projet inconnu", Response::HTTP_FOUND);

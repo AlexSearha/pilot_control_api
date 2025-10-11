@@ -17,13 +17,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class UserController extends AbstractController
 {
-
     public function __construct(
         private UserService $userService,
         private FormatService $format,
         private SerializerInterface $serializer,
-    )
-    {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -65,7 +64,7 @@ final class UserController extends AbstractController
 
         try {
             $newUser = $this->userService->createUser($payload);
-            $serializeData= $this->serializer->serialize($newUser, 'json', ['groups' => 'get:auth_me']);
+            $serializeData = $this->serializer->serialize($newUser, 'json', ['groups' => 'get:auth_me']);
 
             return $this->format->sendSuccessSerializeResponse($serializeData);
 
@@ -83,7 +82,7 @@ final class UserController extends AbstractController
 
         try {
             $user = $this->userService->updateUser($payload, $userUuid);
-            $serializeData= $this->serializer->serialize($user, 'json', ['groups' => 'get:auth_me']);
+            $serializeData = $this->serializer->serialize($user, 'json', ['groups' => 'get:auth_me']);
 
             return $this->format->sendSuccessSerializeResponse($serializeData);
 
@@ -192,7 +191,7 @@ final class UserController extends AbstractController
 
     #[Route('/api/company/{companyUuid}/user/{userUuid}', name: 'app_company_delete_user', methods:['DELETE'])]
     #[IsGranted(UserVoter::DELETE, 'user')]
-    public function deleteClientUser(#[MapEntity(mapping: ['userUuid' => 'uuid'])] User $user ,string $companyUuid )
+    public function deleteClientUser(#[MapEntity(mapping: ['userUuid' => 'uuid'])] User $user, string $companyUuid)
     {
 
         try {
@@ -206,7 +205,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/company/{companyUuid}/users', name: 'app_company_delete_users', methods:['DELETE'])]
-    public function deleteClientUsers(string $companyUuid , Request $request)
+    public function deleteClientUsers(string $companyUuid, Request $request)
     {
 
         $payload = $request->getPayload()->all();

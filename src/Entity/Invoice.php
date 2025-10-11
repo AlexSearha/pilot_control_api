@@ -91,9 +91,9 @@ class Invoice
     #[ORM\ManyToOne(inversedBy: 'invoices')]
     private ?Project $project = null;
 
-     /**
-     * Pre persist variables
-     */
+    /**
+    * Pre persist variables
+    */
     #[ORM\PrePersist]
     public function generateUuid(): void
     {
@@ -101,7 +101,7 @@ class Invoice
             $this->uuid = Uuid::v4();
         }
 
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
@@ -112,7 +112,7 @@ class Invoice
      * Pre update variables
      */
     #[ORM\PreUpdate]
-    public function setPreUpdate() : void
+    public function setPreUpdate(): void
     {
         $this->updatedAt = new DateTimeImmutable();
     }

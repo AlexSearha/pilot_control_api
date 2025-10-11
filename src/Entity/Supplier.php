@@ -31,7 +31,7 @@ class Supplier
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.",)]
+    #[Assert\Email(message: "L'email {{ value }} n'est pas un format valide.", )]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -104,7 +104,7 @@ class Supplier
             $this->uuid = Uuid::v4();
         }
 
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;

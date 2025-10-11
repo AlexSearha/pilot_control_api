@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ORM\Entity(repositoryClass: CompanyTypeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class CompanyType
@@ -45,9 +44,9 @@ class CompanyType
     #[Assert\DateTime]#[Assert\DateTime]
     private ?\DateTimeImmutable $deletedAt = null;
 
-     /**
-     * Pre persist variables
-     */
+    /**
+    * Pre persist variables
+    */
     #[ORM\PrePersist]
     public function setPrePersist(): void
     {
@@ -55,7 +54,7 @@ class CompanyType
             $this->uuid = Uuid::v4();
         }
 
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;

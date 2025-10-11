@@ -13,21 +13,21 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 final class AuthController extends AbstractController
 {
-
     public function __construct(
         private AuthService $authService,
         private FormatService $format
-    ){}
+    ) {
+    }
 
     #[Route('/api/registration', name: 'app_auth_registration', methods:['POST'])]
     public function registration(Request $request): JsonResponse
     {
-       $payload = $request->getPayload()->all();
-       $companyUuid = $request->query->get('co');
+        $payload = $request->getPayload()->all();
+        $companyUuid = $request->query->get('co');
 
         try {
             $this->authService->registerNewUser($payload, $companyUuid);
-            return $this->format->sendSuccessReponse(null,Response::HTTP_CREATED);
+            return $this->format->sendSuccessReponse(null, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return $this->format->sendErrorReponse($e->getMessage(), $e->getCode());
 
@@ -36,9 +36,9 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/api/confirm-email', name: 'app_auth_confirm-email', methods:['POST'])]
-    public function confirmEmail(Request $request) :JsonResponse
+    public function confirmEmail(Request $request): JsonResponse
     {
-       $payload = $request->getPayload()->all();
+        $payload = $request->getPayload()->all();
 
         return $this->authService->confirmEmail($payload['token']);
     }

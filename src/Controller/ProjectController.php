@@ -23,8 +23,8 @@ final class ProjectController extends AbstractController
         private ProjectService $projectService,
         private SerializerInterface $serializer,
         private FormatService $format
-    )
-    {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -45,8 +45,7 @@ final class ProjectController extends AbstractController
     #[IsGranted(CompanyVoter::VIEW, 'company')]
     public function getClientProjects(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $projects = $this->projectService->getClientProjects($company->getUuid());
 
         $serializeData = $this->serializer->serialize($projects, 'json', ['groups' => 'get:light_project']);
@@ -59,8 +58,7 @@ final class ProjectController extends AbstractController
     public function getOneProject(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['projectUuid' => 'uuid'])] Project $project
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $project = $this->projectService->getAllProjects($company->getUuid());
 
         $serializeData = $this->serializer->serialize($project, 'json', ['groups' => 'get:light_project']);
@@ -73,8 +71,7 @@ final class ProjectController extends AbstractController
     public function createProject(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -96,13 +93,12 @@ final class ProjectController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['projectUuid' => 'uuid'])] Project $project,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
 
-            $project = $this->projectService->updateProject($company, $project ,$payload);
+            $project = $this->projectService->updateProject($company, $project, $payload);
             $serializeData = $this->serializer->serialize($project, 'json', ['groups' => 'get:light_project']);
 
             return $this->format->sendSuccessSerializeResponse($serializeData);
@@ -118,8 +114,7 @@ final class ProjectController extends AbstractController
     public function deleteProject(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['projectUuid' => 'uuid'])] Project $project,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $this->projectService->deleteProject($company, $project);

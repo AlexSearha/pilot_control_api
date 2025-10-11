@@ -32,15 +32,15 @@ final class SupplierOrderVoter extends Voter
 
         switch ($attribute) {
             case self::EDIT:
-            case self:: DELETE:
-            case self:: CREATE:
+            case self::DELETE:
+            case self::CREATE:
                 if (in_array('ROLE_MANAGER', $user->getRoles())) {
                     return $user->getCompany()->getId() === $subject->getCompany()->getId() && $user->getCompany()->getId() === $subject->getSupplier()->getId();
                 }
                 break;
 
             case self::VIEW:
-                if (in_array('ROLE_EMPLOYEE', $user->getRoles()) ||in_array('ROLE_MANAGER', $user->getRoles())) {
+                if (in_array('ROLE_EMPLOYEE', $user->getRoles()) || in_array('ROLE_MANAGER', $user->getRoles())) {
                     return $user->getCompany()->getId() === $subject->getCompany()->getId() && $user->getCompany()->getId() === $subject->getSupplier()->getId();
                 }
                 break;

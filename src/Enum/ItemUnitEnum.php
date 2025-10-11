@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum ItemUnitEnum : string
+enum ItemUnitEnum: string
 {
     case CENTIMETER = 'cm';
     case METER = 'm';

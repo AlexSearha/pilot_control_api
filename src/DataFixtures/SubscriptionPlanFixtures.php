@@ -9,11 +9,10 @@ use Doctrine\Persistence\ObjectManager;
 
 class SubscriptionPlanFixtures extends Fixture
 {
-
     public function __construct(
         private CurrencyRepository $currencyRepo
-    )
-    {}
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {

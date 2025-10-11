@@ -22,14 +22,15 @@ class SupplierOrderService
         private SupplierServices $supplierServices,
         private ValidatorInterface $validator,
         private EntityManagerInterface $em
-    ) {}
+    ) {
+    }
 
     public function getAllSupplierOrders(): array
     {
         return $this->supplierOrderRepo->findBy([], ['name' => 'ASC']);
     }
 
-    public function getAllClientSupplierOrders(?Company $company, ?Supplier $supplier) : array
+    public function getAllClientSupplierOrders(?Company $company, ?Supplier $supplier): array
     {
         $this->companyService->isCompanyExist($company);
         $this->supplierServices->isSupplierExist($supplier);
@@ -38,26 +39,28 @@ class SupplierOrderService
 
     }
 
-    public function getClientSupplierOrder(?Company $company, ?Supplier $supplier, ?SupplierOrder $supplierOrder) : object
+    public function getClientSupplierOrder(?Company $company, ?Supplier $supplier, ?SupplierOrder $supplierOrder): object
     {
         $this->companyService->isCompanyExist($company);
         $this->supplierServices->isSupplierExist($supplier);
         $this->isSupplierOrderExist($supplierOrder);
 
-        return $this->supplierOrderRepo->findOneBy([
+        return $this->supplierOrderRepo->findOneBy(
+            [
             'company' => $company->getId(),
             'supplier' => $supplier->getId(),
             'id' => $supplierOrder->getId()
         ],
-        ['company' => 'ASC']);
+            ['company' => 'ASC']
+        );
     }
 
-    public function createSupplierOrder(?Company $company, ?Supplier $supplier, array $payload) : SupplierOrder
+    public function createSupplierOrder(?Company $company, ?Supplier $supplier, array $payload): SupplierOrder
     {
         $this->companyService->isCompanyExist($company);
         $this->supplierServices->isSupplierExist($supplier);
 
-        if (count($payload) === 0 ) {
+        if (count($payload) === 0) {
             throw new \Exception('Aucune donnée à traiter', Response::HTTP_BAD_REQUEST);
         }
 
@@ -96,13 +99,13 @@ class SupplierOrderService
 
             return $newSupplierOrder;
         } catch (\Exception $e) {
-         throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+            throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
 
         }
 
     }
 
-    public function deleteClientSupplierOrder(?Company $company, ?Supplier $supplier, ?SupplierOrder $supplierOrder) :void
+    public function deleteClientSupplierOrder(?Company $company, ?Supplier $supplier, ?SupplierOrder $supplierOrder): void
     {
         $this->companyService->isCompanyExist($company);
         $this->supplierServices->isSupplierExist($supplier);
@@ -110,15 +113,15 @@ class SupplierOrderService
 
         $supplierOrder->setDeletedAt(new DateTimeImmutable());
 
-         try {
+        try {
             $this->em->flush();
         } catch (\Exception $e) {
-         throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
+            throw new \Exception('Une erreur est survenue', Response::HTTP_BAD_REQUEST);
 
         }
     }
 
-    public function deleteClientSupplierOrders(?Company $company, ?Supplier $supplier, array $payload) :void
+    public function deleteClientSupplierOrders(?Company $company, ?Supplier $supplier, array $payload): void
     {
         $this->companyService->isCompanyExist($company);
         $this->supplierServices->isSupplierExist($supplier);
@@ -133,7 +136,7 @@ class SupplierOrderService
         }
     }
 
-    public function isSupplierOrderExist(?SupplierOrder $supplierOrder) : void
+    public function isSupplierOrderExist(?SupplierOrder $supplierOrder): void
     {
         if (!$supplierOrder) {
             throw new \Exception("Commande inconnu", Response::HTTP_FOUND);

@@ -47,9 +47,9 @@ class Currency
     #[ORM\OneToMany(targetEntity: SupplierOrder::class, mappedBy: 'currency')]
     private Collection $supplierOrders;
 
-     /**
-     * Pre persist variables
-     */
+    /**
+    * Pre persist variables
+    */
     #[ORM\PrePersist]
     public function generateUuid(): void
     {
@@ -57,7 +57,7 @@ class Currency
             $this->uuid = Uuid::v4();
         }
 
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;

@@ -24,7 +24,8 @@ final class MaintenanceController extends AbstractController
         private MaintenanceService $maintenanceService,
         private SerializerInterface $serializer,
         private FormatService $format
-    ) {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -43,8 +44,7 @@ final class MaintenanceController extends AbstractController
     #[IsGranted(CompanyVoter::VIEW, 'company')]
     public function getAllClientMaintenances(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $maintenances = $this->maintenanceService->getAllClientMaintenances($company);
         $serialzeData = $this->serializer->serialize($maintenances, 'json', ['groups' => 'get:light_maintenance']);
         return $this->format->sendSuccessSerializeResponse($serialzeData);
@@ -55,8 +55,7 @@ final class MaintenanceController extends AbstractController
     public function getAllItemClientMaintenances(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] ?Item $item,
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $maintenances = $this->maintenanceService->getAllItemClientMaitenances($company, $item);
         $serialzeData = $this->serializer->serialize($maintenances, 'json', ['groups' => 'get:light_maintenance']);
         return $this->format->sendSuccessSerializeResponse($serialzeData);
@@ -68,9 +67,7 @@ final class MaintenanceController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] ?Item $item,
         #[MapEntity(mapping: ['maintenanceUuid' => 'uuid'])] ?Maintenance $maintenance,
-
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $findMaintenance = $this->maintenanceService->getClientMaintenance($company, $item, $maintenance);
         $serialzeData = $this->serializer->serialize($findMaintenance, 'json', ['groups' => 'get:light_maintenance']);
         return $this->format->sendSuccessSerializeResponse($serialzeData);
@@ -82,8 +79,7 @@ final class MaintenanceController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] ?item $item,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -102,8 +98,7 @@ final class MaintenanceController extends AbstractController
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] ?Item $item,
         #[MapEntity(mapping: ['maintenanceUuid' => 'uuid'])] ?Maintenance $maintenance,
         Request $request
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -121,8 +116,7 @@ final class MaintenanceController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] ?Item $item,
         #[MapEntity(mapping: ['maintenanceUuid' => 'uuid'])] ?Maintenance $maintenance,
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
             $this->maintenanceService->deleteClientMaintenance($company, $item, $maintenance);
             return $this->format->sendSuccessReponse(null, Response::HTTP_NO_CONTENT);
@@ -138,8 +132,7 @@ final class MaintenanceController extends AbstractController
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] ?Item $item,
         #[MapEntity(mapping: ['maintenanceUuid' => 'uuid'])] ?Maintenance $maintenance,
         Request $request
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {

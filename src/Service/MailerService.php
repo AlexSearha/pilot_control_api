@@ -11,8 +11,8 @@ class MailerService extends AbstractController
 {
     public function __construct(
         private MailerInterface $mailer
-    )
-    {}
+    ) {
+    }
 
     public function sendSimpleEmail(string $token, User $user, string $subject)
     {
@@ -27,7 +27,7 @@ class MailerService extends AbstractController
             ->subject($subject)
             ->html('<p>Votre token : </p>' . $token);
 
-            $this->mailer->send($email);
+        $this->mailer->send($email);
     }
 
 }

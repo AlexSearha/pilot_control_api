@@ -9,9 +9,10 @@ use Doctrine\Persistence\ObjectManager;
 class GroupFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
-    {}
+    {
+    }
 
-     public function getDependencies(): array
+    public function getDependencies(): array
     {
         return [
             CurrencyFixtures::class,

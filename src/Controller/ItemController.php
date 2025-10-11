@@ -23,8 +23,8 @@ final class ItemController extends AbstractController
         private ItemService $itemService,
         private SerializerInterface $serializer,
         private FormatService $format
-    )
-    {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -63,8 +63,7 @@ final class ItemController extends AbstractController
     public function getClienItem(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] Item $item
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $items = $this->itemService->getClientItem($company, $item);
@@ -82,8 +81,7 @@ final class ItemController extends AbstractController
     public function createClienItem(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -104,8 +102,7 @@ final class ItemController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] Item $item,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -124,8 +121,7 @@ final class ItemController extends AbstractController
     public function deleteClienItem(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         #[MapEntity(mapping: ['itemUuid' => 'uuid'])] Item $item,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $this->itemService->deleteItem($company, $item);
@@ -141,8 +137,7 @@ final class ItemController extends AbstractController
     public function deleteClienItems(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {

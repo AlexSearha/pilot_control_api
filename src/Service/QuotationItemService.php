@@ -20,8 +20,8 @@ class QuotationItemService extends AbstractController
         private ItemService $itemService,
         private EntityManagerInterface $em,
         private ValidatorInterface $validator,
-    )
-    {}
+    ) {
+    }
 
     public function getAllQuotationItems(): array
     {
@@ -35,7 +35,7 @@ class QuotationItemService extends AbstractController
         return $this->quotationItemRepo->findBy(['item' => $item->getId(), ["createdAt" => "ASC"] ]);
     }
 
-    public function getClientQuotationItem(?Item $item, ?QuotationItem $quotationItem) : QuotationItem
+    public function getClientQuotationItem(?Item $item, ?QuotationItem $quotationItem): QuotationItem
     {
         $this->itemService->isItemExist($item);
         $this->isQuotationItemExist($quotationItem);
@@ -43,7 +43,7 @@ class QuotationItemService extends AbstractController
         return $quotationItem;
     }
 
-    public function findClientQuotationItemByUuid(string $quotationItemUuid) : QuotationItem
+    public function findClientQuotationItemByUuid(string $quotationItemUuid): QuotationItem
     {
         $quotationItem = $this->quotationItemRepo->findOneBy(['uuid' => $quotationItemUuid]);
         $this->isQuotationItemExist($quotationItem);
@@ -51,7 +51,7 @@ class QuotationItemService extends AbstractController
         return $quotationItem;
     }
 
-    public function createQuotationItem(?Quotation $quotation, array $payload) : QuotationItem
+    public function createQuotationItem(?Quotation $quotation, array $payload): QuotationItem
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_NOT_FOUND);
@@ -107,7 +107,7 @@ class QuotationItemService extends AbstractController
 
     }
 
-    public function updateQuotationItem(?QuotationItem $quotationItem, array $payload) : QuotationItem
+    public function updateQuotationItem(?QuotationItem $quotationItem, array $payload): QuotationItem
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_NOT_FOUND);
@@ -150,11 +150,11 @@ class QuotationItemService extends AbstractController
         }
     }
 
-    public function deleteQuotationItem(?QuotationItem $quotationItem) : void
+    public function deleteQuotationItem(?QuotationItem $quotationItem): void
     {
         $this->isQuotationItemExist($quotationItem);
 
-         try {
+        try {
             $this->em->remove($quotationItem);
             $this->em->flush();
 
@@ -165,13 +165,13 @@ class QuotationItemService extends AbstractController
 
     }
 
-    public function deleteQuotationItemByUuid(string $quotationItemUuid) : void
+    public function deleteQuotationItemByUuid(string $quotationItemUuid): void
     {
         $quotationItem = $this->findClientQuotationItemByUuid($quotationItemUuid);
         $this->deleteQuotationItem($quotationItem);
     }
 
-    public function deleteQuotationItems(array $payload) : void
+    public function deleteQuotationItems(array $payload): void
     {
         if (count($payload) === 0) {
             throw new \Exception("Aucune donnée à traiter", Response::HTTP_BAD_REQUEST);
@@ -185,7 +185,7 @@ class QuotationItemService extends AbstractController
         }
     }
 
-    public function isQuotationItemExist(?QuotationItem $quotationItem) : QuotationItem
+    public function isQuotationItemExist(?QuotationItem $quotationItem): QuotationItem
     {
         if (!$quotationItem) {
             throw new \Exception("l'article du devis est inconnu", Response::HTTP_NOT_FOUND);

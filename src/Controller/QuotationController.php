@@ -22,7 +22,8 @@ final class QuotationController extends AbstractController
         private QuotationService $quotationService,
         private SerializerInterface $serializer,
         private FormatService $format
-    ) {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -57,8 +58,7 @@ final class QuotationController extends AbstractController
     public function getOneClientQuotation(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['quotationUuid' => 'uuid'])] ?Quotation $quotation,
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $quotation = $this->quotationService->getOneClientQuotation($company, $quotation);
@@ -75,14 +75,13 @@ final class QuotationController extends AbstractController
     public function createClientQuotation(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
 
         $payload = $request->getPayload()->all();
 
         try {
 
-            $quotations = $this->quotationService->createClientQuotation($company,$payload);
+            $quotations = $this->quotationService->createClientQuotation($company, $payload);
             $serialzeData = $this->serializer->serialize($quotations, 'json', ['groups' => 'get:light_quotation']);
             return $this->format->sendSuccessSerializeResponse($serialzeData);
 
@@ -97,8 +96,7 @@ final class QuotationController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['quotationUuid' => 'uuid'])] ?Quotation $quotation,
         Request $request
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -117,8 +115,7 @@ final class QuotationController extends AbstractController
     public function deleteClientQuotation(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['quotationUuid' => 'uuid'])] ?Quotation $quotation,
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $updateQuotation = $this->quotationService->deleteClientQuotation($company, $quotation);

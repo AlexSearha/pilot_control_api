@@ -101,16 +101,16 @@ class Item
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
-     /**
-     * Pre persist variables
-     */
+    /**
+    * Pre persist variables
+    */
     #[ORM\PrePersist]
     public function setPrePersist(): void
     {
         if ($this->uuid === null) {
             $this->uuid = Uuid::v4();
         }
-        if($this->createdAt === null && $this->updatedAt === null) {
+        if ($this->createdAt === null && $this->updatedAt === null) {
             $dateTimeNow = new DateTimeImmutable();
             $this->createdAt = $dateTimeNow;
             $this->updatedAt = $dateTimeNow;
@@ -124,7 +124,7 @@ class Item
         }
     }
 
-      /**
+    /**
      * Pre update variables
      */
     #[ORM\PreUpdate]

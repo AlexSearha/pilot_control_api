@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum CompanyClientOverloadTypeEnum : string
+enum CompanyClientOverloadTypeEnum: string
 {
     case SELECT     = 'SELECT';
     case STRING     = 'STRING';

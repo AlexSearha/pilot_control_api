@@ -23,7 +23,8 @@ final class InvoiceController extends AbstractController
         private InvoiceService $invoiceService,
         private SerializerInterface $serializer,
         private FormatService $format
-    ) {}
+    ) {
+    }
 
     // ---- Super Admin Routes ----
 
@@ -58,8 +59,7 @@ final class InvoiceController extends AbstractController
     public function getClientInvoice(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['invoiceUuid' => 'uuid'])] ?Invoice $invoice
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $invoice = $this->invoiceService->getOneClientInvoice($company, $invoice);
@@ -94,8 +94,7 @@ final class InvoiceController extends AbstractController
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['invoiceUuid' => 'uuid'])] ?Invoice $invoice,
         Request $request
-        ): JsonResponse
-    {
+    ): JsonResponse {
         $payload = $request->getPayload()->all();
 
         try {
@@ -114,8 +113,7 @@ final class InvoiceController extends AbstractController
     public function deletelientInvoice(
         #[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company,
         #[MapEntity(mapping: ['invoiceUuid' => 'uuid'])] ?Invoice $invoice,
-        ): JsonResponse
-    {
+    ): JsonResponse {
         try {
 
             $invoice = $this->invoiceService->deleteClientInvoice($company, $invoice);
