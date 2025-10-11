@@ -73,7 +73,7 @@ final class CompanyController extends AbstractController
 
     #[Route('/api/company/{companyUuid}', name: 'app_get_one_company', methods:['GET'])]
     #[IsGranted(CompanyVoter::VIEW, 'company')]
-    public function getOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company): JsonResponse
+    public function getOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company): JsonResponse
     {
         $allCompanies = $this->companyService->getOneCompany($company->getUuid());
 
@@ -85,7 +85,7 @@ final class CompanyController extends AbstractController
 
     #[Route('/api/company/{companyUuid}', name: 'app_update_one_company', methods:['PATCH'])]
     #[IsGranted(CompanyVoter::EDIT, 'company')]
-    public function updateOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] Company $company, Request $request): JsonResponse
+    public function updateOneCompany(#[MapEntity(mapping: ['companyUuid' => 'uuid'])] ?Company $company, Request $request): JsonResponse
     {
 
         $payload = $request->getPayload()->all();
