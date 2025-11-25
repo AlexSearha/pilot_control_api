@@ -60,7 +60,6 @@ final class UserController extends AbstractController
     {
 
         $payload = $request->getPayload()->all();
-        dd($payload);
 
         try {
             $newUser = $this->userService->createUser($payload);

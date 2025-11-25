@@ -86,7 +86,7 @@ class UserService extends AbstractController
         }
 
         if (isset($payload['roles'])) {
-            $newUser->setRoles($payload['roles']);
+            $newUser->setRoles([$payload['roles']]);
         }
 
 
@@ -310,5 +310,10 @@ class UserService extends AbstractController
         }
 
         return;
+    }
+
+    public function getUser() : User
+    {
+        return $this->getUser();
     }
 }

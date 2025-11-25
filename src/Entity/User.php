@@ -105,6 +105,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Quotation::class, mappedBy: 'createdBy')]
     private Collection $quotations;
 
+    /**
+     * @var Collection<int, TicketMessage>
+     */
+    #[ORM\OneToMany(targetEntity: TicketMessage::class, mappedBy: 'sender')]
+    private Collection $ticketMessages;
+
 
     /**
      * Pre persist variables
@@ -153,6 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->notification = new ArrayCollection();
         $this->projects = new ArrayCollection();
         $this->quotations = new ArrayCollection();
+        $this->ticketMessages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -495,5 +502,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmailAuthCode(string $authCode): void
     {
         $this->authCode = $authCode;
+    }
+
+    /**
+     * @return Collection<int, TicketMessage>
+     */
+    public function getTicketMessages(): Collection
+    {
+        return $this->ticketMessages;
+    }
+
+    public function addTicketMessage(TicketMessage $ticketMessage): static
+    {
+        if (!$this->ticketMessages->contains($ticketMessage)) {
+            $this->ticketMessages->add($ticketMessage);
+            $ticketMessage->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketMessage(TicketMessage $ticketMessage): static
+    {
+        if ($this->ticketMessages->removeElement($ticketMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($ticketMessage->getSender() === $this) {
+                $ticketMessage->setSender(null);
+            }
+        }
+
+        return $this;
     }
 }
